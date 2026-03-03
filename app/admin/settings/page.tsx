@@ -137,7 +137,7 @@ export default function AdminProfileSettingsPage() {
         <Box className="grid gap-4">
             {/* Header (เหมือน Support page) */}
             <Box>
-                <Typography className="text-xl font-extrabold text-slate-900">ตั้งค่าโปรไฟล์</Typography>
+                <Typography variant="h6" className="text-xl font-extrabold text-slate-900">ตั้งค่าโปรไฟล์</Typography>
                 <Typography className="text-sm text-slate-600">
                     จัดการข้อมูลส่วนตัวและความปลอดภัยของบัญชีผู้ใช้
                 </Typography>
