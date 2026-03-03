@@ -68,7 +68,7 @@ export default function AdminCarsPage() {
         <Box className="grid gap-4">
             <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="items-start md:items-center justify-between">
                 <Box>
-                    <Typography className="text-xl font-extrabold text-slate-900">รถ / Fleet</Typography>
+                    <Typography variant="h6" className="text-xl font-extrabold text-slate-900">รถ</Typography>
                     <Typography className="text-sm text-slate-600">จัดการข้อมูลรถ ราคา และสถานะการใช้งาน</Typography>
                 </Box>
 
