@@ -117,7 +117,7 @@ export default function AdminBookingsPage() {
         <Box className="grid gap-4">
             <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="items-start md:items-center justify-between">
                 <Box>
-                    <Typography className="text-xl font-extrabold text-slate-900">การจอง</Typography>
+                    <Typography variant="h6" className="text-xl font-extrabold text-slate-900">การจอง</Typography>
                     <Typography className="text-sm text-slate-600">ค้นหา / กรอง และจัดการสถานะการจอง</Typography>
                 </Box>
 
