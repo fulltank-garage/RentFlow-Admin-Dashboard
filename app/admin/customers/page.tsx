@@ -28,7 +28,7 @@ export default function AdminCustomersPage() {
         <Box className="grid gap-4">
             <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="items-start md:items-center justify-between">
                 <Box>
-                    <Typography className="text-xl font-extrabold text-slate-900">ลูกค้า</Typography>
+                    <Typography variant="h6" className="text-xl font-extrabold text-slate-900">ลูกค้า</Typography>
                     <Typography className="text-sm text-slate-600">ดูข้อมูลลูกค้าและประวัติการจอง</Typography>
                 </Box>
                 <TextField size="small" label="ค้นหา (ชื่อ/โทร/อีเมล)" value={q} onChange={(e) => setQ(e.target.value)} className="w-full md:w-[320px]" />
