@@ -47,7 +47,7 @@ export default function AdminPaymentsPage() {
         <Box className="grid gap-4">
             <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="items-start md:items-center justify-between">
                 <Box>
-                    <Typography className="text-xl font-extrabold text-slate-900">การชำระเงิน</Typography>
+                    <Typography variant="h6" className="text-xl font-extrabold text-slate-900">การชำระเงิน</Typography>
                     <Typography className="text-sm text-slate-600">ติดตามสถานะธุรกรรมและตรวจสอบการชำระเงิน</Typography>
                 </Box>
 
