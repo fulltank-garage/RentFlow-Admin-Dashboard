@@ -173,21 +173,19 @@ export default function AdminProfileSettingsPage() {
         </Alert>
       )}
 
-      {/* Card wrapper (เหมือน Support page) */}
       <Card
         elevation={0}
         className="rounded-2xl! border border-slate-200 bg-white"
       >
         <CardContent className="p-5">
           <Stack spacing={2.5}>
-            {/* Title row (icon box แบบเดียวกับ Support) */}
             <Stack
               direction={{ xs: "column", sm: "row" }}
               spacing={2}
               className="items-start sm:items-center justify-between"
             >
               <Stack direction="row" spacing={1.25} className="items-center">
-                <Box className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-slate-50">
+                <Box className="grid h-10 w-10 place-items-center rounded-lg border border-slate-200 bg-slate-50">
                   <PersonRoundedIcon fontSize="small" />
                 </Box>
                 <Box>
@@ -199,44 +197,35 @@ export default function AdminProfileSettingsPage() {
                   </Typography>
                 </Box>
               </Stack>
-
-              <Button
-                variant="outlined"
-                size="small"
-                disabled={saving}
-                onClick={onReset}
-                sx={{
-                  textTransform: "none",
-                  borderRadius: 2,
-                  borderColor: "rgb(226 232 240)",
-                  color: "rgb(15 23 42)",
-                  "&:hover": {
-                    borderColor: "rgb(203 213 225)",
-                    bgcolor: "white",
-                  },
-                }}
-              >
-                รีเซ็ต
-              </Button>
             </Stack>
 
             <Divider />
 
-            {/* Tabs (คุม indicator/spacing ให้ดูเหมือนอยู่ใน Card เดียวกัน) */}
             <Tabs
               value={tab}
               onChange={(_, v: TabKey) => {
                 setTab(v);
                 router.replace(`/admin/settings?tab=${v}`);
               }}
-              textColor="inherit"
-              TabIndicatorProps={{ style: { height: 3 } }}
+              TabIndicatorProps={{ style: { display: "none" } }}
               sx={{
-                minHeight: 36,
+                minHeight: 40,
+                p: 0.5,
+
                 "& .MuiTab-root": {
                   minHeight: 36,
                   textTransform: "none",
                   fontWeight: 800,
+                  borderRadius: "10px",
+                  px: 2,
+                  color: "rgb(71 85 105)",
+                },
+
+                "& .Mui-selected": {
+                  bgcolor: "#fff",
+                  color: "rgb(15 23 42)",
+                  border: "1px solid rgb(226 232 240)",
+                  boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
                 },
               }}
             >
@@ -259,8 +248,8 @@ export default function AdminProfileSettingsPage() {
                     <Avatar
                       src={avatarUrl || undefined}
                       sx={{
-                        width: 56,
-                        height: 56,
+                        width: 80,
+                        height: 80,
                         bgcolor: "rgb(15 23 42)",
                         fontWeight: 900,
                       }}
@@ -319,6 +308,11 @@ export default function AdminProfileSettingsPage() {
                       onChange={(e) =>
                         setProfile((p) => ({ ...p, firstName: e.target.value }))
                       }
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "14px",
+                        },
+                      }}
                     />
                     <TextField
                       fullWidth
@@ -327,6 +321,11 @@ export default function AdminProfileSettingsPage() {
                       onChange={(e) =>
                         setProfile((p) => ({ ...p, lastName: e.target.value }))
                       }
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "14px",
+                        },
+                      }}
                     />
                   </Stack>
 
@@ -338,6 +337,11 @@ export default function AdminProfileSettingsPage() {
                       onChange={(e) =>
                         setProfile((p) => ({ ...p, email: e.target.value }))
                       }
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "14px",
+                        },
+                      }}
                     />
                     <TextField
                       fullWidth
@@ -346,6 +350,11 @@ export default function AdminProfileSettingsPage() {
                       onChange={(e) =>
                         setProfile((p) => ({ ...p, phone: e.target.value }))
                       }
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "14px",
+                        },
+                      }}
                     />
                   </Stack>
 
@@ -394,7 +403,7 @@ export default function AdminProfileSettingsPage() {
             ) : (
               <Stack spacing={2.5} sx={{ maxWidth: 560 }}>
                 <Stack direction="row" spacing={1.25} className="items-center">
-                  <Box className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-slate-50">
+                  <Box className="grid h-10 w-10 place-items-center rounded-lg border border-slate-200 bg-slate-50">
                     <LockRoundedIcon fontSize="small" />
                   </Box>
                   <Box>
@@ -402,7 +411,7 @@ export default function AdminProfileSettingsPage() {
                       เปลี่ยนรหัสผ่าน
                     </Typography>
                     <Typography className="mt-1 text-xs text-slate-500">
-                      แนะนำให้ใช้รหัสผ่านที่เดายาก และไม่ซ้ำกับที่อื่น
+                      แนะนำให้ใช้รหัสผ่านที่เดายาก
                     </Typography>
                   </Box>
                 </Stack>
@@ -417,6 +426,11 @@ export default function AdminProfileSettingsPage() {
                     onChange={(e) =>
                       setPwd((p) => ({ ...p, current: e.target.value }))
                     }
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "14px",
+                      },
+                    }}
                     fullWidth
                   />
                   <TextField
@@ -426,6 +440,11 @@ export default function AdminProfileSettingsPage() {
                     onChange={(e) =>
                       setPwd((p) => ({ ...p, next: e.target.value }))
                     }
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "14px",
+                      },
+                    }}
                     fullWidth
                     helperText="อย่างน้อย 8 ตัวอักษร"
                   />
@@ -436,6 +455,11 @@ export default function AdminProfileSettingsPage() {
                     onChange={(e) =>
                       setPwd((p) => ({ ...p, confirm: e.target.value }))
                     }
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "14px",
+                      },
+                    }}
                     fullWidth
                   />
 
