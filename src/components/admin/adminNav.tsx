@@ -55,7 +55,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
     color: "#8B5CF6",
   },
   {
-    label: "รถ",
+    label: "จัดการรถ",
     href: "/admin/cars",
     icon: DirectionsCarRoundedIcon,
     group: "Operations",
@@ -125,11 +125,11 @@ export const ADMIN_NAV: AdminNavItem[] = [
     group: "Administration",
     color: "#EC4899",
   },
-  {
-    label: "ผู้ใช้แอดมิน/สิทธิ์",
-    href: "/admin/admin-users",
-    icon: AdminPanelSettingsRoundedIcon,
-    group: "Administration",
-    color: "#334155",
-  },
+  // {
+  //   label: "ผู้ใช้แอดมิน/สิทธิ์",
+  //   href: "/admin/admin-users",
+  //   icon: AdminPanelSettingsRoundedIcon,
+  //   group: "Administration",
+  //   color: "#334155",
+  // },
 ];
