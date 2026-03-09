@@ -217,7 +217,7 @@ function StatusChip({ s }: { s: CarStatus }) {
 
   return (
     <Chip
-      size="small"
+      size="medium"
       label={m.label}
       variant="outlined"
       sx={statusChipSX(m.tone)}
@@ -248,8 +248,8 @@ function SectionCard({
       <Typography className="text-xs font-bold uppercase tracking-wider text-slate-500">
         {title}
       </Typography>
-      <Divider className="my-2! border-slate-200!" />
-      <Stack spacing={0.5}>{children}</Stack>
+      <Divider className="my-3! border-slate-200!" />
+      <Stack spacing={2}>{children}</Stack>
     </Box>
   );
 }
@@ -290,7 +290,7 @@ function CarThumb({
         />
       ) : (
         <Box className="grid h-full w-full place-items-center text-slate-400">
-          <DirectionsCarRoundedIcon fontSize="small" />
+          <DirectionsCarRoundedIcon fontSize="medium" />
         </Box>
       )}
     </Box>
@@ -633,7 +633,7 @@ export default function AdminCarsPage() {
 
             <Button
               variant="contained"
-              size="small"
+              size="medium"
               onClick={openCreateDrawer}
               sx={{
                 textTransform: "none",
@@ -646,7 +646,7 @@ export default function AdminCarsPage() {
                 },
               }}
             >
-              + เพิ่มรถ
+              + เพิ่มรถคันใหม่
             </Button>
           </Stack>
         </Stack>
@@ -719,7 +719,7 @@ export default function AdminCarsPage() {
 
                             {c.badge ? (
                               <Chip
-                                size="small"
+                                size="medium"
                                 label={c.badge}
                                 variant="outlined"
                               />
@@ -801,7 +801,7 @@ export default function AdminCarsPage() {
                               borderColor: "rgb(226 232 240)",
                             }}
                           >
-                            รายละเอียด
+                            แก้ไขรายละเอียด
                           </Button>
 
                           <Button
@@ -855,416 +855,471 @@ export default function AdminCarsPage() {
         PaperProps={{
           sx: {
             width: isMobile ? "100%" : 700,
-            height: isMobile ? "80%" : "100%",
+            height: isMobile ? "88%" : "100%",
+            borderTopLeftRadius: isMobile ? 18 : 0,
+            borderTopRightRadius: isMobile ? 18 : 0,
+            overflow: "hidden",
+            bgcolor: "rgb(248 250 252)",
           },
         }}
       >
-        <Box className="p-4">
-          <Stack
-            direction="row"
-            spacing={1.25}
-            className="items-center justify-between"
+        <Box className="flex h-full flex-col">
+          {/* Topbar */}
+          <Box
+            sx={{
+              position: "sticky",
+              top: 0,
+              zIndex: 20,
+              borderBottom: "1px solid rgb(226 232 240)",
+              backgroundColor: "rgba(255,255,255,0.92)",
+              backdropFilter: "blur(10px)",
+            }}
           >
-            <Stack
-              direction="row"
-              spacing={1.25}
-              className="items-center min-w-0"
-            >
-              <Box className="min-w-0">
-                <Typography className="text-sm font-black text-slate-900">
-                  {drawerMode === "create"
-                    ? "เพิ่มรถใหม่"
-                    : drawerMode === "detail"
-                    ? "รายละเอียดรถ"
-                    : "เปลี่ยนสถานะรถ"}
-                </Typography>
-                <Typography className="text-xs text-slate-500">
-                  {drawerMode === "create"
-                    ? "กรอกข้อมูลรถคันใหม่"
-                    : selectedCar
-                    ? `${selectedCar.id} • ${selectedCar.name}`
-                    : "-"}
-                </Typography>
+            {isMobile ? (
+              <Box className="flex justify-center pt-2">
+                <Box className="h-1.5 w-12 rounded-full bg-slate-300" />
               </Box>
-            </Stack>
+            ) : null}
 
-            <Stack direction="row" spacing={1} className="items-center">
-              <IconButton onClick={closeDrawer}>
-                <CloseRoundedIcon />
-              </IconButton>
-            </Stack>
-          </Stack>
-
-          <Divider className="my-4! border-slate-200!" />
-
-          {(drawerMode === "create" ||
-            (drawerMode === "detail" && selectedCar)) && (
-            <Stack spacing={2}>
-              <Box className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <Box
-                  className="relative bg-linear-to-br from-slate-900 to-slate-700"
-                  sx={{ minHeight: 220 }}
+            <Box className="px-4 py-3">
+              <Stack
+                direction="row"
+                spacing={1.5}
+                className="items-center justify-between"
+              >
+                <Stack
+                  direction="row"
+                  spacing={1.25}
+                  className="items-center min-w-0"
                 >
-                  {drawerMode === "detail" && selectedCar?.carImage ? (
-                    <Box
-                      component="img"
-                      src={selectedCar.carImage}
-                      alt={selectedCar.name}
-                      sx={{
-                        width: "100%",
-                        height: 220,
-                        objectFit: "cover",
-                        display: "block",
-                        opacity: 0.5,
-                      }}
-                    />
-                  ) : editImage ? (
-                    <Box
-                      component="img"
-                      src={editImage}
-                      alt={editName || "รถคันใหม่"}
-                      sx={{
-                        width: "100%",
-                        height: 220,
-                        objectFit: "cover",
-                        display: "block",
-                        opacity: 0.5,
-                      }}
-                    />
-                  ) : (
-                    <Box className="grid h-55 w-full place-items-center text-slate-300">
-                      <DirectionsCarRoundedIcon sx={{ fontSize: 56 }} />
-                    </Box>
-                  )}
-
                   <Box
-                    className="absolute inset-0"
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-slate-200"
                     sx={{
-                      background:
-                        "linear-gradient(to bottom, rgba(15,23,42,0.82), rgba(15,23,42,0.18))",
+                      bgcolor:
+                        drawerMode === "create"
+                          ? "rgb(239 246 255)"
+                          : drawerMode === "detail"
+                          ? "rgb(241 245 249)"
+                          : "rgb(254 249 195)",
+                      color:
+                        drawerMode === "create"
+                          ? "rgb(3 105 161)"
+                          : drawerMode === "detail"
+                          ? "rgb(15 23 42)"
+                          : "rgb(146 64 14)",
                     }}
-                  />
+                  >
+                    <DirectionsCarRoundedIcon sx={{ fontSize: 20 }} />
+                  </Box>
 
-                  <Box className="absolute inset-x-0 top-0 p-4 text-white">
-                    <Typography className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
-                      {drawerMode === "create" ? "New Car" : "Car Overview"}
-                    </Typography>
-
-                    <Typography className="mt-2 text-xl font-extrabold">
+                  <Box className="min-w-0">
+                    <Typography className="truncate text-sm font-black text-slate-900">
                       {drawerMode === "create"
-                        ? editName || "รถคันใหม่"
-                        : selectedCar?.name}
+                        ? "เพิ่มรถใหม่"
+                        : drawerMode === "detail"
+                        ? "แก้ไขรายละเอียดรถ"
+                        : "เปลี่ยนสถานะรถ"}
                     </Typography>
 
-                    <Typography className="mt-2 text-sm text-slate-200">
-                      {editType} • {editSeats} ที่นั่ง • {editTransmission}
-                    </Typography>
-
-                    <Typography className="mt-4 text-sm text-slate-300">
-                      ราคา / วัน
-                    </Typography>
-                    <Typography className="text-2xl font-extrabold">
-                      {formatTHB(Number(editPricePerDay) || 0)}
+                    <Typography className="truncate text-xs text-slate-500">
+                      {drawerMode === "create"
+                        ? "กรอกข้อมูลรถคันใหม่"
+                        : selectedCar
+                        ? `${selectedCar.id} • ${selectedCar.name}`
+                        : "-"}
                     </Typography>
                   </Box>
-                </Box>
-              </Box>
+                </Stack>
 
-              <Box className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <SectionCard title="ข้อมูลหลัก">
-                  <TextField
-                    fullWidth
-                    label="ชื่อรถ"
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                      },
-                    }}
-                  />
-                  <TextField
-                    fullWidth
-                    label="Badge"
-                    value={editBadge}
-                    onChange={(e) => setEditBadge(e.target.value)}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                      },
-                    }}
-                  />
-                  <TextField
-                    fullWidth
-                    label="รูปภาพ (path)"
-                    value={editImage}
-                    onChange={(e) => setEditImage(e.target.value)}
-                    placeholder="/cosySec1.webp"
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                      },
-                    }}
-                  />
-                </SectionCard>
-
-                <SectionCard title="ประเภทรถ">
-                  <TextField
-                    select
-                    fullWidth
-                    label="ประเภท"
-                    value={editType}
-                    onChange={(e) => setEditType(e.target.value as CarType)}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                      },
-                    }}
-                  >
-                    <MenuItem value="Economy">Economy</MenuItem>
-                    <MenuItem value="Sedan">Sedan</MenuItem>
-                    <MenuItem value="SUV">SUV</MenuItem>
-                    <MenuItem value="Van">Van</MenuItem>
-                  </TextField>
-
-                  <TextField
-                    fullWidth
-                    type="number"
-                    label="จำนวนที่นั่ง"
-                    value={editSeats}
-                    onChange={(e) => setEditSeats(Number(e.target.value))}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                      },
-                    }}
-                  />
-                </SectionCard>
-
-                <SectionCard title="ระบบขับเคลื่อน">
-                  <TextField
-                    select
-                    fullWidth
-                    label="เกียร์"
-                    value={editTransmission}
-                    onChange={(e) =>
-                      setEditTransmission(e.target.value as Transmission)
-                    }
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                      },
-                    }}
-                  >
-                    <MenuItem value="Auto">Auto</MenuItem>
-                    <MenuItem value="Manual">Manual</MenuItem>
-                  </TextField>
-
-                  <TextField
-                    select
-                    fullWidth
-                    label="เชื้อเพลิง"
-                    value={editFuel}
-                    onChange={(e) => setEditFuel(e.target.value as Fuel)}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                      },
-                    }}
-                  >
-                    <MenuItem value="Gasoline">Gasoline</MenuItem>
-                    <MenuItem value="Hybrid">Hybrid</MenuItem>
-                    <MenuItem value="EV">EV</MenuItem>
-                  </TextField>
-                </SectionCard>
-
-                <SectionCard title="ราคา">
-                  <TextField
-                    fullWidth
-                    type="number"
-                    label="ราคา / วัน"
-                    value={editPricePerDay}
-                    onChange={(e) => setEditPricePerDay(Number(e.target.value))}
-                    sx={{
-                      "& .MuiOutlinedInput-root": {
-                        borderRadius: "10px",
-                      },
-                    }}
-                  />
-                  {drawerMode === "detail" && selectedCar ? (
-                    <InfoRow
-                      label="สถานะปัจจุบัน"
-                      value={<StatusChip s={selectedCar.status} />}
-                    />
-                  ) : null}
-                </SectionCard>
-
-                {drawerMode === "detail" && selectedCar ? (
-                  <>
-                    <SectionCard title="ข้อมูลระบบ">
-                      <InfoRow label="รหัสรถ" value={selectedCar.id} />
-                      <InfoRow
-                        label="วันที่สร้าง"
-                        value={selectedCar.createdAt ?? "-"}
-                      />
-                      <InfoRow
-                        label="อัปเดตล่าสุด"
-                        value={selectedCar.updatedAt ?? "-"}
-                      />
-                    </SectionCard>
-
-                    <SectionCard title="สรุปข้อมูลรถ">
-                      <InfoRow label="รุ่นรถ" value={selectedCar.name} />
-                      <InfoRow label="ประเภท" value={selectedCar.type} />
-                      <InfoRow
-                        label="ที่นั่ง"
-                        value={`${selectedCar.seats} ที่นั่ง`}
-                      />
-                      <InfoRow label="เชื้อเพลิง" value={selectedCar.fuel} />
-                    </SectionCard>
-                  </>
-                ) : null}
-              </Box>
-
-              <Stack direction="row" spacing={1} className="pt-0.5">
-                <Button
-                  fullWidth
-                  size="medium"
-                  variant="outlined"
+                <IconButton
                   onClick={closeDrawer}
                   sx={{
-                    textTransform: "none",
-                    borderColor: "rgb(226 232 240)",
-                    color: "rgb(15 23 42)",
-                    borderRadius: 2.5,
-                  }}
-                >
-                  ปิดหน้าต่าง
-                </Button>
-                <Button
-                  fullWidth
-                  size="medium"
-                  variant="contained"
-                  onClick={saveCarForm}
-                  sx={{
-                    textTransform: "none",
-                    bgcolor: "rgb(15 23 42)",
-                    boxShadow: "none",
-                    borderRadius: 2.5,
+                    border: "1px solid rgb(226 232 240)",
+                    bgcolor: "white",
                     "&:hover": {
-                      bgcolor: "rgb(2 6 23)",
-                      boxShadow: "none",
+                      bgcolor: "rgb(248 250 252)",
                     },
                   }}
                 >
-                  {drawerMode === "create" ? "เพิ่มรถ" : "บันทึกข้อมูล"}
-                </Button>
+                  <CloseRoundedIcon />
+                </IconButton>
               </Stack>
-            </Stack>
-          )}
+            </Box>
+          </Box>
 
-          {drawerMode === "status" && selectedCar ? (
-            <Stack spacing={2}>
-              <Box className="rounded-2xl border border-slate-200 bg-white p-4">
-                <Stack direction="row" spacing={1} className="items-center">
-                  <Typography className="text-sm font-bold text-slate-900">
-                    สถานะปัจจุบัน
-                  </Typography>
-                  <StatusChip s={selectedCar.status} />
-                </Stack>
-              </Box>
-
-              <Box className="rounded-2xl border border-slate-200 bg-white p-4">
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={1}
-                  className="items-start sm:items-center justify-between"
-                >
-                  <Typography className="text-sm font-bold text-slate-900">
-                    เลือกสถานะใหม่
-                  </Typography>
-
-                  <Stack direction="row" spacing={1} className="items-center">
-                    <Typography className="text-xs text-slate-500">
-                      จะบันทึกเป็น
-                    </Typography>
-                    <StatusChip s={nextStatus} />
-                  </Stack>
-                </Stack>
-
-                <Stack
-                  direction={{ xs: "column", sm: "row" }}
-                  spacing={1.2}
-                  className="mt-4"
-                >
-                  {quickActions.map((action) => {
-                    const isActive = nextStatus === action.status;
-
-                    return (
-                      <Button
-                        key={action.status}
-                        variant={isActive ? "contained" : action.variant}
-                        startIcon={action.icon}
-                        onClick={() => setNextStatus(action.status)}
+          {/* Content */}
+          <Box className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+            {(drawerMode === "create" ||
+              (drawerMode === "detail" && selectedCar)) && (
+              <Stack spacing={2}>
+                <Box className="overflow-hidden rounded-2xl border border-slate-200 bg-white mb-1">
+                  <Box
+                    className="relative bg-linear-to-br from-slate-900 to-slate-700"
+                    sx={{ minHeight: 220 }}
+                  >
+                    {drawerMode === "detail" && selectedCar?.carImage ? (
+                      <Box
+                        component="img"
+                        src={selectedCar.carImage}
+                        alt={selectedCar.name}
                         sx={{
-                          flex: 1,
-                          textTransform: "none",
-                          borderRadius: 2.5,
-                          ...(isActive
-                            ? {
-                                bgcolor: "rgb(15 23 42)",
-                                color: "white",
-                                boxShadow: "none",
-                                "&:hover": {
-                                  bgcolor: "rgb(2 6 23)",
-                                  boxShadow: "none",
-                                },
-                              }
-                            : action.sx),
+                          width: "100%",
+                          height: 220,
+                          objectFit: "cover",
+                          display: "block",
+                          opacity: 0.5,
                         }}
-                      >
-                        {action.label}
-                      </Button>
-                    );
-                  })}
-                </Stack>
-              </Box>
+                      />
+                    ) : editImage ? (
+                      <Box
+                        component="img"
+                        src={editImage}
+                        alt={editName || "รถคันใหม่"}
+                        sx={{
+                          width: "100%",
+                          height: 220,
+                          objectFit: "cover",
+                          display: "block",
+                          opacity: 0.5,
+                        }}
+                      />
+                    ) : (
+                      <Box className="grid h-55 w-full place-items-center text-slate-300">
+                        <DirectionsCarRoundedIcon sx={{ fontSize: 56 }} />
+                      </Box>
+                    )}
 
-              <Stack direction="row" spacing={1} className="pt-0.5">
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  onClick={closeDrawer}
-                  sx={{
-                    textTransform: "none",
-                    borderColor: "rgb(226 232 240)",
-                    color: "rgb(15 23 42)",
-                    borderRadius: 2.5,
-                  }}
-                >
-                  ยกเลิก
-                </Button>
+                    <Box
+                      className="absolute inset-0"
+                      sx={{
+                        background:
+                          "linear-gradient(to bottom, rgba(15,23,42,0.82), rgba(15,23,42,0.18))",
+                      }}
+                    />
 
-                <Button
-                  fullWidth
-                  variant="contained"
-                  onClick={saveCarStatus}
-                  sx={{
-                    textTransform: "none",
-                    bgcolor: "rgb(15 23 42)",
-                    boxShadow: "none",
-                    borderRadius: 2.5,
-                    "&:hover": {
-                      bgcolor: "rgb(2 6 23)",
+                    <Box className="absolute inset-x-0 top-0 p-4 text-white">
+                      <Typography className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+                        {drawerMode === "create" ? "New Car" : "Car Overview"}
+                      </Typography>
+
+                      <Typography className="mt-2 text-xl font-extrabold">
+                        {drawerMode === "create"
+                          ? editName || "รถคันใหม่"
+                          : selectedCar?.name}
+                      </Typography>
+
+                      <Typography className="mt-2 text-sm text-slate-200">
+                        {editType} • {editSeats} ที่นั่ง • {editTransmission}
+                      </Typography>
+
+                      <Typography className="mt-4 text-sm text-slate-300">
+                        ราคา / วัน
+                      </Typography>
+                      <Typography className="text-2xl font-extrabold">
+                        {formatTHB(Number(editPricePerDay) || 0)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Box>
+
+                <Box className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <SectionCard title="ข้อมูลหลัก">
+                    <TextField
+                      fullWidth
+                      label="ชื่อรถ"
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                      }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="Badge"
+                      value={editBadge}
+                      onChange={(e) => setEditBadge(e.target.value)}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                      }}
+                    />
+                    <TextField
+                      fullWidth
+                      label="รูปภาพ (path)"
+                      value={editImage}
+                      onChange={(e) => setEditImage(e.target.value)}
+                      placeholder="/cosySec1.webp"
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                      }}
+                    />
+                  </SectionCard>
+
+                  <SectionCard title="ประเภทรถ">
+                    <TextField
+                      select
+                      fullWidth
+                      label="ประเภท"
+                      value={editType}
+                      onChange={(e) => setEditType(e.target.value as CarType)}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                      }}
+                    >
+                      <MenuItem value="Economy">Economy</MenuItem>
+                      <MenuItem value="Sedan">Sedan</MenuItem>
+                      <MenuItem value="SUV">SUV</MenuItem>
+                      <MenuItem value="Van">Van</MenuItem>
+                    </TextField>
+
+                    <TextField
+                      fullWidth
+                      type="number"
+                      label="จำนวนที่นั่ง"
+                      value={editSeats}
+                      onChange={(e) => setEditSeats(Number(e.target.value))}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                      }}
+                    />
+                  </SectionCard>
+
+                  <SectionCard title="ระบบขับเคลื่อน">
+                    <TextField
+                      select
+                      fullWidth
+                      label="เกียร์"
+                      value={editTransmission}
+                      onChange={(e) =>
+                        setEditTransmission(e.target.value as Transmission)
+                      }
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                      }}
+                    >
+                      <MenuItem value="Auto">Auto</MenuItem>
+                      <MenuItem value="Manual">Manual</MenuItem>
+                    </TextField>
+
+                    <TextField
+                      select
+                      fullWidth
+                      label="เชื้อเพลิง"
+                      value={editFuel}
+                      onChange={(e) => setEditFuel(e.target.value as Fuel)}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                      }}
+                    >
+                      <MenuItem value="Gasoline">Gasoline</MenuItem>
+                      <MenuItem value="Hybrid">Hybrid</MenuItem>
+                      <MenuItem value="EV">EV</MenuItem>
+                    </TextField>
+                  </SectionCard>
+
+                  <SectionCard title="ราคา">
+                    <TextField
+                      fullWidth
+                      type="number"
+                      label="ราคา / วัน"
+                      value={editPricePerDay}
+                      onChange={(e) =>
+                        setEditPricePerDay(Number(e.target.value))
+                      }
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "10px",
+                        },
+                      }}
+                    />
+                    {drawerMode === "detail" && selectedCar ? (
+                      <InfoRow
+                        label="สถานะปัจจุบัน"
+                        value={<StatusChip s={selectedCar.status} />}
+                      />
+                    ) : null}
+                  </SectionCard>
+
+                  {drawerMode === "detail" && selectedCar ? (
+                    <>
+                      <SectionCard title="ข้อมูลระบบ">
+                        <InfoRow label="รหัสรถ" value={selectedCar.id} />
+                        <InfoRow
+                          label="วันที่สร้าง"
+                          value={selectedCar.createdAt ?? "-"}
+                        />
+                        <InfoRow
+                          label="อัปเดตล่าสุด"
+                          value={selectedCar.updatedAt ?? "-"}
+                        />
+                      </SectionCard>
+
+                      <SectionCard title="สรุปข้อมูลรถ">
+                        <InfoRow label="รุ่นรถ" value={selectedCar.name} />
+                        <InfoRow label="ประเภท" value={selectedCar.type} />
+                        <InfoRow
+                          label="ที่นั่ง"
+                          value={`${selectedCar.seats} ที่นั่ง`}
+                        />
+                        <InfoRow label="เชื้อเพลิง" value={selectedCar.fuel} />
+                      </SectionCard>
+                    </>
+                  ) : null}
+                </Box>
+
+                <Stack direction="row" spacing={2} className="pt-0.5">
+                  <Button
+                    fullWidth
+                    size="medium"
+                    variant="outlined"
+                    onClick={closeDrawer}
+                    sx={{
+                      textTransform: "none",
+                      borderColor: "rgb(226 232 240)",
+                      color: "rgb(15 23 42)",
+                      borderRadius: 2.5,
+                    }}
+                  >
+                    ปิดหน้าต่าง
+                  </Button>
+                  <Button
+                    fullWidth
+                    size="medium"
+                    variant="contained"
+                    onClick={saveCarForm}
+                    sx={{
+                      textTransform: "none",
+                      bgcolor: "rgb(15 23 42)",
                       boxShadow: "none",
-                    },
-                  }}
-                >
-                  บันทึกสถานะ
-                </Button>
+                      borderRadius: 2.5,
+                      "&:hover": {
+                        bgcolor: "rgb(2 6 23)",
+                        boxShadow: "none",
+                      },
+                    }}
+                  >
+                    {drawerMode === "create" ? "เพิ่มรถ" : "บันทึกข้อมูล"}
+                  </Button>
+                </Stack>
               </Stack>
-            </Stack>
-          ) : null}
+            )}
+
+            {drawerMode === "status" && selectedCar ? (
+              <Stack spacing={2}>
+                <Box className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <Stack direction="row" spacing={1} className="items-center">
+                    <Typography className="text-sm font-bold text-slate-900">
+                      สถานะปัจจุบัน
+                    </Typography>
+                    <StatusChip s={selectedCar.status} />
+                  </Stack>
+                </Box>
+
+                <Box className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1}
+                    className="items-start sm:items-center justify-between"
+                  >
+                    <Typography className="text-sm font-bold text-slate-900">
+                      เลือกสถานะใหม่
+                    </Typography>
+
+                    <Stack direction="row" spacing={1} className="items-center">
+                      <Typography className="text-xs text-slate-500">
+                        จะบันทึกเป็น
+                      </Typography>
+                      <StatusChip s={nextStatus} />
+                    </Stack>
+                  </Stack>
+
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.2}
+                    className="mt-4"
+                  >
+                    {quickActions.map((action) => {
+                      const isActive = nextStatus === action.status;
+
+                      return (
+                        <Button
+                          key={action.status}
+                          variant={isActive ? "contained" : action.variant}
+                          startIcon={action.icon}
+                          onClick={() => setNextStatus(action.status)}
+                          sx={{
+                            flex: 1,
+                            textTransform: "none",
+                            borderRadius: 2.5,
+                            ...(isActive
+                              ? {
+                                  bgcolor: "rgb(15 23 42)",
+                                  color: "white",
+                                  boxShadow: "none",
+                                  "&:hover": {
+                                    bgcolor: "rgb(2 6 23)",
+                                    boxShadow: "none",
+                                  },
+                                }
+                              : action.sx),
+                          }}
+                        >
+                          {action.label}
+                        </Button>
+                      );
+                    })}
+                  </Stack>
+                </Box>
+
+                <Stack direction="row" spacing={2} className="pt-0.5">
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    onClick={closeDrawer}
+                    sx={{
+                      textTransform: "none",
+                      borderColor: "rgb(226 232 240)",
+                      color: "rgb(15 23 42)",
+                      borderRadius: 2.5,
+                    }}
+                  >
+                    ยกเลิก
+                  </Button>
+
+                  <Button
+                    fullWidth
+                    variant="contained"
+                    onClick={saveCarStatus}
+                    sx={{
+                      textTransform: "none",
+                      bgcolor: "rgb(15 23 42)",
+                      boxShadow: "none",
+                      borderRadius: 2.5,
+                      "&:hover": {
+                        bgcolor: "rgb(2 6 23)",
+                        boxShadow: "none",
+                      },
+                    }}
+                  >
+                    บันทึกสถานะ
+                  </Button>
+                </Stack>
+              </Stack>
+            ) : null}
+          </Box>
         </Box>
       </Drawer>
 
