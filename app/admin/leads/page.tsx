@@ -35,6 +35,7 @@ import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import CheckCircleRoundedIcon from "@mui/icons-material/CheckCircleRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import MarkEmailReadRoundedIcon from "@mui/icons-material/MarkEmailReadRounded";
+import DoNotDisturbRoundedIcon from "@mui/icons-material/DoNotDisturbRounded";
 
 type LeadStatus = "new" | "contacted" | "won" | "lost";
 
@@ -148,7 +149,7 @@ function statusMeta(s: LeadStatus) {
   return { label: "ไม่สำเร็จ", tone: "rose" as const };
 }
 
-function statusChipSX(tone: ReturnType<typeof statusMeta>["tone"]) {
+function statusChipSX(tone: "amber" | "sky" | "emerald" | "rose" | "slate") {
   if (tone === "amber") {
     return {
       border: "1px solid rgb(253 230 138)",
@@ -156,6 +157,7 @@ function statusChipSX(tone: ReturnType<typeof statusMeta>["tone"]) {
       color: "rgb(146 64 14)",
     };
   }
+
   if (tone === "sky") {
     return {
       border: "1px solid rgb(186 230 253)",
@@ -163,6 +165,7 @@ function statusChipSX(tone: ReturnType<typeof statusMeta>["tone"]) {
       color: "rgb(3 105 161)",
     };
   }
+
   if (tone === "emerald") {
     return {
       border: "1px solid rgb(167 243 208)",
@@ -170,10 +173,19 @@ function statusChipSX(tone: ReturnType<typeof statusMeta>["tone"]) {
       color: "rgb(6 95 70)",
     };
   }
+
+  if (tone === "rose") {
+    return {
+      border: "1px solid rgb(254 202 202)",
+      bgcolor: "rgb(254 226 226)",
+      color: "rgb(153 27 27)",
+    };
+  }
+
   return {
-    border: "1px solid rgb(254 202 202)",
-    bgcolor: "rgb(254 226 226)",
-    color: "rgb(153 27 27)",
+    border: "1px solid rgb(226 232 240)",
+    bgcolor: "rgb(248 250 252)",
+    color: "rgb(51 65 85)",
   };
 }
 
@@ -238,18 +250,33 @@ function followUpBadge(followUpAt?: string | null) {
   const startDayAfter = new Date(startTomorrow);
   startDayAfter.setDate(startDayAfter.getDate() + 1);
 
-  if (due.getTime() < now.getTime())
+  if (due.getTime() < now.getTime()) {
     return { label: "เกินกำหนด", tone: "rose" as const };
-  if (due >= startToday && due < startTomorrow)
+  }
+  if (due >= startToday && due < startTomorrow) {
     return { label: "ติดตามวันนี้", tone: "amber" as const };
-  if (due >= startTomorrow && due < startDayAfter)
+  }
+  if (due >= startTomorrow && due < startDayAfter) {
     return { label: "ติดตามพรุ่งนี้", tone: "sky" as const };
+  }
   return { label: "มีนัดติดตาม", tone: "slate" as const };
+}
+
+function LeadStatusChip({ status }: { status: LeadStatus }) {
+  const meta = statusMeta(status);
+  return (
+    <Chip
+      size="medium"
+      label={meta.label}
+      variant="outlined"
+      sx={statusChipSX(meta.tone)}
+    />
+  );
 }
 
 function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
   return (
-    <Box className="grid grid-cols-1 gap-1 sm:grid-cols-[120px_1fr]">
+    <Box className="grid grid-cols-1 gap-1 sm:grid-cols-[140px_1fr]">
       <Typography className="text-sm font-medium text-slate-500">
         {label}
       </Typography>
@@ -267,10 +294,10 @@ function SectionCard({
 }) {
   return (
     <Box className="rounded-2xl border border-slate-200 bg-white p-4">
-      <Typography className="text-sm font-bold text-slate-900">
+      <Typography className="text-xs font-bold uppercase tracking-wider text-slate-500">
         {title}
       </Typography>
-      <Divider className="my-3 border-slate-200!" />
+      <Divider className="my-3! border-slate-200!" />
       <Stack spacing={2}>{children}</Stack>
     </Box>
   );
@@ -281,32 +308,13 @@ export default function AdminLeadsPage() {
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
 
   const [rows, setRows] = React.useState<Lead[]>(SEED);
-
   const [q, setQ] = React.useState("");
   const [status, setStatus] = React.useState<LeadStatus | "all">("all");
   const [channel, setChannel] = React.useState<Lead["channel"] | "all">("all");
 
   const [openId, setOpenId] = React.useState<string | null>(null);
-  const selected = React.useMemo(
-    () => rows.find((r) => r.id === openId) ?? null,
-    [rows, openId]
-  );
 
   const [followUpLocal, setFollowUpLocal] = React.useState("");
-
-  React.useEffect(() => {
-    if (!selected?.followUpAt) {
-      setFollowUpLocal("");
-      return;
-    }
-    const d = new Date(selected.followUpAt);
-    const pad = (n: number) => String(n).padStart(2, "0");
-    setFollowUpLocal(
-      `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
-        d.getHours()
-      )}:${pad(d.getMinutes())}`
-    );
-  }, [selected?.id, selected?.followUpAt]);
 
   const [snack, setSnack] = React.useState<{
     open: boolean;
@@ -318,8 +326,30 @@ export default function AdminLeadsPage() {
     type: "success",
   });
 
+  const selected = React.useMemo(
+    () => rows.find((r) => r.id === openId) ?? null,
+    [rows, openId]
+  );
+
+  React.useEffect(() => {
+    if (!selected?.followUpAt) {
+      setFollowUpLocal("");
+      return;
+    }
+
+    const d = new Date(selected.followUpAt);
+    const pad = (n: number) => String(n).padStart(2, "0");
+
+    setFollowUpLocal(
+      `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+        d.getHours()
+      )}:${pad(d.getMinutes())}`
+    );
+  }, [selected?.id, selected?.followUpAt]);
+
   const filtered = React.useMemo(() => {
     const qq = q.trim().toLowerCase();
+
     return rows
       .filter((r) => (status === "all" ? true : r.status === status))
       .filter((r) => (channel === "all" ? true : r.channel === channel))
@@ -336,21 +366,8 @@ export default function AdminLeadsPage() {
       .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
   }, [rows, q, status, channel]);
 
-  const kpi = React.useMemo(() => {
-    const total = rows.length;
-    const newCount = rows.filter((r) => r.status === "new").length;
-    const contacted = rows.filter((r) => r.status === "contacted").length;
-    const won = rows.filter((r) => r.status === "won").length;
-    const lost = rows.filter((r) => r.status === "lost").length;
-    return { total, newCount, contacted, won, lost };
-  }, [rows]);
-
-  const roundedFieldSX = {
-    "& .MuiOutlinedInput-root": { borderRadius: "14px" },
-  };
-
-  function updateStatus(id: string, s: LeadStatus) {
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: s } : r)));
+  function updateStatus(id: string, next: LeadStatus) {
+    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: next } : r)));
   }
 
   function updateLead(id: string, patch: Partial<Lead>) {
@@ -416,145 +433,116 @@ export default function AdminLeadsPage() {
     setSnack({ open: true, msg: "ล้างเวลาติดตามแล้ว", type: "info" });
   }
 
-  return (
-    <Box className="grid gap-4">
-      <Box>
-        <Typography
-          variant="h6"
-          className="text-xl font-extrabold text-slate-900"
-        >
-          จองผ่านแชท
-        </Typography>
-        <Typography className="text-sm text-slate-600">
-          รวมลูกค้าที่ทักเข้ามา และติดตามสถานะการปิดการขายแบบรวดเร็ว
-        </Typography>
-      </Box>
+  function closeDrawer() {
+    setOpenId(null);
+  }
 
-      <Card
-        elevation={0}
-        className="rounded-2xl! border border-slate-200 bg-white"
-      >
-        <CardContent className="p-5">
+  const roundedFieldSX = {
+    "& .MuiOutlinedInput-root": {
+      borderRadius: "10px",
+    },
+  };
+
+  const quickActions: Array<{
+    label: string;
+    status: LeadStatus;
+    variant: "contained" | "outlined";
+    icon: React.ReactNode;
+    sx: object;
+  }> = [
+    {
+      label: "ใหม่",
+      status: "new",
+      variant: "outlined",
+      icon: <ForumRoundedIcon />,
+      sx: {
+        textTransform: "none",
+        borderColor: "rgb(253 230 138)",
+        color: "rgb(146 64 14)",
+        "&:hover": {
+          borderColor: "rgb(245 158 11)",
+          bgcolor: "rgb(255 251 235)",
+        },
+      },
+    },
+    {
+      label: "ติดต่อแล้ว",
+      status: "contacted",
+      variant: "outlined",
+      icon: <MarkEmailReadRoundedIcon />,
+      sx: {
+        textTransform: "none",
+        borderColor: "rgb(186 230 253)",
+        color: "rgb(3 105 161)",
+        "&:hover": {
+          borderColor: "rgb(56 189 248)",
+          bgcolor: "rgb(240 249 255)",
+        },
+      },
+    },
+    {
+      label: "ปิดการขาย",
+      status: "won",
+      variant: "contained",
+      icon: <CheckCircleRoundedIcon />,
+      sx: {
+        textTransform: "none",
+        bgcolor: "rgb(22 163 74)",
+        boxShadow: "none",
+        "&:hover": {
+          bgcolor: "rgb(21 128 61)",
+          boxShadow: "none",
+        },
+      },
+    },
+    {
+      label: "ไม่สำเร็จ",
+      status: "lost",
+      variant: "outlined",
+      icon: <DoNotDisturbRoundedIcon />,
+      sx: {
+        textTransform: "none",
+        borderColor: "rgb(252 165 165)",
+        color: "rgb(185 28 28)",
+        "&:hover": {
+          borderColor: "rgb(248 113 113)",
+          bgcolor: "rgb(254 242 242)",
+        },
+      },
+    },
+  ];
+
+  return (
+    <>
+      <Box className="grid gap-4">
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={2}
+          className="items-start md:items-center justify-between"
+        >
+          <Box>
+            <Typography
+              variant="h6"
+              className="text-xl font-extrabold text-slate-900"
+            >
+              จองผ่านแชท
+            </Typography>
+            <Typography className="text-sm text-slate-600">
+              จัดการลูกค้าที่ทักเข้ามา ติดตามสถานะ และปิดการขายได้เร็วขึ้น
+            </Typography>
+          </Box>
+
           <Stack
             direction={{ xs: "column", sm: "row" }}
-            spacing={2}
-            className="items-start sm:items-center justify-between"
-          >
-            <Stack direction="row" spacing={1.25} className="items-center">
-              <Box className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-slate-50">
-                <ForumRoundedIcon fontSize="small" />
-              </Box>
-
-              <Box>
-                <Typography className="text-sm font-bold text-slate-900">
-                  สรุป Leads
-                </Typography>
-                <Typography className="mt-1 text-xs text-slate-500">
-                  ทั้งหมด {kpi.total} • ใหม่ {kpi.newCount} • ติดตาม{" "}
-                  {kpi.contacted} • ปิด {kpi.won} • ไม่สำเร็จ {kpi.lost}
-                </Typography>
-              </Box>
-            </Stack>
-
-            <Button
-              variant="contained"
-              size="small"
-              sx={{
-                textTransform: "none",
-                bgcolor: "rgb(15 23 42)",
-                boxShadow: "none",
-                "&:hover": { bgcolor: "rgb(2 6 23)", boxShadow: "none" },
-                borderRadius: 2,
-              }}
-              onClick={() =>
-                setSnack({
-                  open: true,
-                  msg: "พร้อมต่อ API เพื่อดึง Lead จริง",
-                  type: "info",
-                })
-              }
-            >
-              จัดการ Leads
-            </Button>
-          </Stack>
-        </CardContent>
-      </Card>
-
-      <Box className="grid gap-4 sm:grid-cols-5">
-        {[
-          { label: "ทั้งหมด", value: kpi.total, tone: "slate" as const },
-          { label: "ใหม่", value: kpi.newCount, tone: "amber" as const },
-          { label: "ติดต่อแล้ว", value: kpi.contacted, tone: "sky" as const },
-          { label: "ปิดการขาย", value: kpi.won, tone: "emerald" as const },
-          { label: "ไม่สำเร็จ", value: kpi.lost, tone: "rose" as const },
-        ].map((x) => (
-          <Card
-            key={x.label}
-            elevation={0}
-            className={`rounded-2xl! border ${
-              x.tone === "slate"
-                ? "border-slate-200 bg-white"
-                : x.tone === "amber"
-                ? "border-amber-200 bg-amber-50"
-                : x.tone === "sky"
-                ? "border-sky-200 bg-sky-50"
-                : x.tone === "emerald"
-                ? "border-emerald-200 bg-emerald-50"
-                : "border-rose-200 bg-rose-50"
-            }`}
-          >
-            <CardContent className="p-4">
-              <Typography
-                className={`text-xs ${
-                  x.tone === "slate"
-                    ? "text-slate-500"
-                    : x.tone === "amber"
-                    ? "text-amber-700"
-                    : x.tone === "sky"
-                    ? "text-sky-700"
-                    : x.tone === "emerald"
-                    ? "text-emerald-700"
-                    : "text-rose-700"
-                }`}
-              >
-                {x.label}
-              </Typography>
-              <Typography
-                className={`mt-1 text-2xl font-black ${
-                  x.tone === "slate"
-                    ? "text-slate-900"
-                    : x.tone === "amber"
-                    ? "text-amber-900"
-                    : x.tone === "sky"
-                    ? "text-sky-900"
-                    : x.tone === "emerald"
-                    ? "text-emerald-900"
-                    : "text-rose-900"
-                }`}
-              >
-                {x.value}
-              </Typography>
-            </CardContent>
-          </Card>
-        ))}
-      </Box>
-
-      <Card
-        elevation={0}
-        className="rounded-2xl! border border-slate-200 bg-white"
-      >
-        <CardContent className="p-5">
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            spacing={2}
-            className="items-stretch md:items-center"
+            spacing={1.5}
+            className="w-full md:w-auto"
           >
             <TextField
+              size="small"
+              label="ค้นหา (Lead ID / ชื่อ / โทร / รถ)"
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder="ค้นหา Lead ID / ชื่อ / โทร / รถ / note..."
-              fullWidth
-              size="small"
+              className="w-full sm:w-72"
               sx={roundedFieldSX}
               InputProps={{
                 startAdornment: (
@@ -566,13 +554,13 @@ export default function AdminLeadsPage() {
             />
 
             <TextField
+              size="small"
               select
               label="สถานะ"
               value={status}
               onChange={(e) => setStatus(e.target.value as LeadStatus | "all")}
-              size="small"
+              className="w-full sm:w-44"
               sx={roundedFieldSX}
-              className="min-w-40"
               InputProps={{
                 startAdornment: (
                   <Box className="mr-2 text-slate-500">
@@ -589,15 +577,15 @@ export default function AdminLeadsPage() {
             </TextField>
 
             <TextField
+              size="small"
               select
               label="ช่องทาง"
               value={channel}
               onChange={(e) =>
                 setChannel(e.target.value as Lead["channel"] | "all")
               }
-              size="small"
+              className="w-full sm:w-44"
               sx={roundedFieldSX}
-              className="min-w-40"
             >
               <MenuItem value="all">ทั้งหมด</MenuItem>
               <MenuItem value="line">LINE</MenuItem>
@@ -605,410 +593,482 @@ export default function AdminLeadsPage() {
               <MenuItem value="whatsapp">WhatsApp</MenuItem>
               <MenuItem value="phone">โทร</MenuItem>
             </TextField>
+
+            <Button
+              variant="contained"
+              size="medium"
+              onClick={() =>
+                setSnack({
+                  open: true,
+                  msg: "พร้อมต่อ API เพื่อดึง Leads จริง",
+                  type: "info",
+                })
+              }
+              sx={{
+                textTransform: "none",
+                bgcolor: "rgb(15 23 42)",
+                boxShadow: "none",
+                borderRadius: 2.5,
+                "&:hover": {
+                  bgcolor: "rgb(2 6 23)",
+                  boxShadow: "none",
+                },
+              }}
+            >
+              จัดการ Leads
+            </Button>
           </Stack>
-        </CardContent>
-      </Card>
+        </Stack>
 
-      <Card
-        elevation={0}
-        className="rounded-2xl! border border-slate-200 bg-white"
-      >
-        <CardContent className="p-0">
-          <Box className="px-5 py-4 flex items-center justify-between">
-            <Typography className="text-sm font-bold text-slate-900">
-              Leads List
-            </Typography>
-            <Typography className="text-xs text-slate-500">
-              {filtered.length} รายการ
-            </Typography>
-          </Box>
-          <Divider className="border-slate-200!" />
+        <Card
+          elevation={0}
+          className="rounded-2xl! border border-slate-200 bg-white"
+        >
+          <CardContent className="p-0">
+            <Box className="grid">
+              {filtered.map((r, idx) => {
+                const fu = followUpBadge(r.followUpAt);
 
-          <Box className="divide-y divide-slate-200">
-            {filtered.map((r) => {
-              const sm = statusMeta(r.status);
-              const fu = followUpBadge(r.followUpAt);
-
-              return (
-                <Box
-                  key={r.id}
-                  className="px-5 py-4 hover:bg-slate-50 transition-colors"
-                >
-                  <Stack
-                    direction={{ xs: "column", lg: "row" }}
-                    spacing={2}
-                    className="items-start lg:items-center justify-between"
-                  >
-                    <Box className="min-w-0">
+                return (
+                  <Box key={r.id}>
+                    <Box className="p-4 sm:p-5">
                       <Stack
-                        direction="row"
-                        spacing={1}
-                        className="items-center flex-wrap"
+                        direction={{ xs: "column", md: "row" }}
+                        spacing={2}
+                        className="items-start justify-between"
                       >
-                        <Typography className="text-sm font-black text-slate-900">
-                          {r.id}
-                        </Typography>
-
-                        <Chip
-                          size="small"
-                          label={sm.label}
-                          sx={{
-                            ...statusChipSX(sm.tone),
-                            height: 22,
-                            fontSize: 11,
-                            fontWeight: 800,
-                          }}
-                        />
-
-                        <Chip
-                          size="small"
-                          label={channelLabel(r.channel)}
-                          variant="outlined"
-                        />
-                        <Chip
-                          size="small"
-                          label={formatTHB(r.amountEstimate)}
-                          variant="outlined"
-                        />
-                        <Chip
-                          size="small"
-                          label={formatDateTimeTH(r.createdAt)}
-                          variant="outlined"
-                          sx={{ color: "rgb(100 116 139)" }}
-                        />
-
-                        {fu ? (
-                          <Chip
-                            size="small"
-                            icon={<AccessTimeRoundedIcon fontSize="small" />}
-                            label={fu.label}
-                            variant="outlined"
+                        <Stack
+                          direction={{ xs: "column", md: "row" }}
+                          spacing={2}
+                          className="min-w-0 flex-1 w-full"
+                        >
+                          <Avatar
                             sx={{
-                              height: 22,
-                              fontSize: 11,
+                              width: { xs: 56, md: 64 },
+                              height: { xs: 56, md: 64 },
+                              bgcolor: "rgb(248 250 252)",
+                              border: "1px solid rgb(226 232 240)",
+                              color: "rgb(15 23 42)",
                               fontWeight: 800,
-                              ...(fu.tone === "slate"
-                                ? {
-                                    border: "1px solid rgb(226 232 240)",
-                                    bgcolor: "rgb(248 250 252)",
-                                    color: "rgb(51 65 85)",
-                                  }
-                                : statusChipSX(
-                                    fu.tone === "amber"
-                                      ? "amber"
-                                      : fu.tone === "sky"
-                                      ? "sky"
-                                      : "rose"
-                                  )),
                             }}
-                          />
-                        ) : null}
-                      </Stack>
+                          >
+                            <PersonRoundedIcon />
+                          </Avatar>
 
-                      <Typography className="mt-1 text-sm font-semibold text-slate-800">
-                        {r.name} • {r.phone} • {r.carName ?? "-"}
-                      </Typography>
-                      <Typography className="mt-1 text-xs text-slate-500 line-clamp-2">
-                        {r.summaryText}
-                      </Typography>
+                          <Box className="min-w-0 flex-1">
+                            <Stack
+                              direction="row"
+                              spacing={1.5}
+                              className="items-center flex-wrap"
+                            >
+                              <Typography className="text-sm font-extrabold text-slate-900 tracking-wide">
+                                {r.id}
+                              </Typography>
+
+                              <LeadStatusChip status={r.status} />
+
+                              <Chip
+                                size="medium"
+                                label={channelLabel(r.channel)}
+                                variant="outlined"
+                              />
+
+                              <Chip
+                                size="medium"
+                                label={formatTHB(r.amountEstimate)}
+                                variant="outlined"
+                              />
+
+                              {fu ? (
+                                <Chip
+                                  size="medium"
+                                  icon={<AccessTimeRoundedIcon fontSize="small" />}
+                                  label={fu.label}
+                                  variant="outlined"
+                                  sx={{
+                                    ...(fu.tone === "slate"
+                                      ? statusChipSX("slate")
+                                      : statusChipSX(fu.tone)),
+                                  }}
+                                />
+                              ) : null}
+                            </Stack>
+
+                            <Typography className="mt-1 text-lg font-bold text-slate-800">
+                              {r.name}
+                            </Typography>
+
+                            <Divider className="my-2! border-slate-200!" />
+
+                            <Typography className="text-xs text-slate-500">
+                              โทร:{" "}
+                              <span className="font-medium text-slate-700">
+                                {r.phone}
+                              </span>
+                              {" • "}
+                              รถ:{" "}
+                              <span className="font-medium text-slate-700">
+                                {r.carName ?? "-"}
+                              </span>
+                            </Typography>
+
+                            <Typography className="mt-1 text-xs text-slate-500">
+                              รับรถ:{" "}
+                              <span className="font-medium text-slate-700">
+                                {r.pickupDate ?? "-"} ({r.pickupPoint ?? "-"})
+                              </span>
+                            </Typography>
+
+                            <Typography className="mt-1 text-xs text-slate-500">
+                              คืนรถ:{" "}
+                              <span className="font-medium text-slate-700">
+                                {r.returnDate ?? "-"} ({r.returnPoint ?? "-"})
+                              </span>
+                            </Typography>
+
+                            <Typography className="mt-1 text-xs text-slate-500">
+                              สร้างเมื่อ{" "}
+                              <span className="font-medium text-slate-700">
+                                {formatDateTimeTH(r.createdAt)}
+                              </span>
+                            </Typography>
+
+                            <Typography className="mt-2 text-sm text-slate-600 line-clamp-2">
+                              {r.summaryText}
+                            </Typography>
+                          </Box>
+                        </Stack>
+
+                        <Stack
+                          spacing={1.5}
+                          className="w-full md:w-auto"
+                          sx={{
+                            minWidth: { md: 220, lg: 240 },
+                          }}
+                        >
+                          <Box className="flex items-center justify-between rounded-lg border border-slate-200 bg-slate-50 px-3 py-2">
+                            <Typography className="text-xs text-slate-500">
+                              สถานะปัจจุบัน
+                            </Typography>
+                            <LeadStatusChip status={r.status} />
+                          </Box>
+
+                          <TextField
+                            select
+                            size="small"
+                            value={r.status}
+                            onChange={(e) =>
+                              updateStatus(r.id, e.target.value as LeadStatus)
+                            }
+                            sx={{
+                              ...roundedFieldSX,
+                              "& .MuiInputBase-root": {
+                                backgroundColor: "rgb(248 250 252)",
+                              },
+                            }}
+                          >
+                            <MenuItem value="new">ใหม่</MenuItem>
+                            <MenuItem value="contacted">ติดต่อแล้ว</MenuItem>
+                            <MenuItem value="won">ปิดการขาย</MenuItem>
+                            <MenuItem value="lost">ไม่สำเร็จ</MenuItem>
+                          </TextField>
+
+                          <Stack direction="row" spacing={1} className="justify-end flex-wrap">
+                            <Tooltip title="โทร">
+                              <IconButton component="a" href={toTelHref(r.phone)}>
+                                <CallRoundedIcon />
+                              </IconButton>
+                            </Tooltip>
+
+                            <Tooltip title="เปิดแชท">
+                              <IconButton
+                                component="a"
+                                href={toChatHref(r.channel, r)}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                <ChatRoundedIcon />
+                              </IconButton>
+                            </Tooltip>
+
+                            <Button
+                              size="medium"
+                              variant="contained"
+                              onClick={() => setOpenId(r.id)}
+                              endIcon={<OpenInNewRoundedIcon />}
+                              className="rounded-lg!"
+                              sx={{
+                                textTransform: "none",
+                                bgcolor: "rgb(15 23 42)",
+                                boxShadow: "none",
+                                "&:hover": {
+                                  bgcolor: "rgb(2 6 23)",
+                                  boxShadow: "none",
+                                },
+                              }}
+                            >
+                              รายละเอียด
+                            </Button>
+                          </Stack>
+                        </Stack>
+                      </Stack>
                     </Box>
 
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      className="items-center flex-wrap"
-                    >
-                      <Tooltip title="โทร">
-                        <IconButton component="a" href={toTelHref(r.phone)}>
-                          <CallRoundedIcon />
-                        </IconButton>
-                      </Tooltip>
+                    {idx !== filtered.length - 1 ? (
+                      <Divider className="border-slate-200!" />
+                    ) : null}
+                  </Box>
+                );
+              })}
 
-                      <Tooltip title="เปิดแชท">
-                        <IconButton
-                          component="a"
-                          href={toChatHref(r.channel, r)}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <ChatRoundedIcon />
-                        </IconButton>
-                      </Tooltip>
-
-                      <TextField
-                        select
-                        size="small"
-                        value={r.status}
-                        onChange={(e) =>
-                          updateStatus(r.id, e.target.value as LeadStatus)
-                        }
-                        sx={{
-                          ...roundedFieldSX,
-                          minWidth: 160,
-                          "& .MuiInputBase-root": {
-                            backgroundColor: "rgb(248 250 252)",
-                          },
-                        }}
-                      >
-                        <MenuItem value="new">ใหม่</MenuItem>
-                        <MenuItem value="contacted">ติดต่อแล้ว</MenuItem>
-                        <MenuItem value="won">ปิดการขาย</MenuItem>
-                        <MenuItem value="lost">ไม่สำเร็จ</MenuItem>
-                      </TextField>
-
-                      <Button
-                        size="small"
-                        variant="contained"
-                        onClick={() => setOpenId(r.id)}
-                        endIcon={<OpenInNewRoundedIcon />}
-                        sx={{
-                          textTransform: "none",
-                          bgcolor: "rgb(15 23 42)",
-                          boxShadow: "none",
-                          "&:hover": {
-                            bgcolor: "rgb(2 6 23)",
-                            boxShadow: "none",
-                          },
-                          borderRadius: 2,
-                        }}
-                      >
-                        รายละเอียด
-                      </Button>
-                    </Stack>
-                  </Stack>
+              {!filtered.length ? (
+                <Box className="p-8 text-center">
+                  <Typography className="text-sm text-slate-600">
+                    ไม่พบรายการที่ตรงกับเงื่อนไข
+                  </Typography>
                 </Box>
-              );
-            })}
-
-            {filtered.length === 0 ? (
-              <Box className="px-5 py-10 text-center">
-                <Typography className="text-sm font-semibold text-slate-900">
-                  ไม่พบข้อมูล
-                </Typography>
-                <Typography className="mt-1 text-xs text-slate-500">
-                  ลองปรับตัวกรอง หรือค้นหาใหม่
-                </Typography>
-              </Box>
-            ) : null}
-          </Box>
-        </CardContent>
-      </Card>
+              ) : null}
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
 
       <Drawer
         anchor={isMobile ? "bottom" : "right"}
         open={!!openId}
-        onClose={() => setOpenId(null)}
+        onClose={closeDrawer}
+        ModalProps={{
+          keepMounted: true,
+        }}
         PaperProps={{
           sx: {
             width: isMobile ? "100%" : 700,
-            height: isMobile ? "80%" : "100%",
+            height: isMobile ? "88%" : "100%",
+            borderTopLeftRadius: isMobile ? 18 : 0,
+            borderTopRightRadius: isMobile ? 18 : 0,
+            overflow: "hidden",
+            bgcolor: "rgb(248 250 252)",
           },
         }}
       >
-        <Box className="p-4">
-          <Stack
-            direction="row"
-            spacing={1.25}
-            className="items-center justify-between"
+        <Box className="flex h-full flex-col">
+          <Box
+            sx={{
+              position: "sticky",
+              top: 0,
+              zIndex: 20,
+              borderBottom: "1px solid rgb(226 232 240)",
+              backgroundColor: "rgba(255,255,255,0.92)",
+              backdropFilter: "blur(10px)",
+            }}
           >
-            <Stack
-              direction="row"
-              spacing={1.25}
-              className="items-center min-w-0"
-            >
-              <Avatar
-                sx={{
-                  width: 42,
-                  height: 42,
-                  bgcolor: "rgb(248 250 252)",
-                  border: "1px solid rgb(226 232 240)",
-                  color: "rgb(15 23 42)",
-                }}
-              >
-                <PersonRoundedIcon />
-              </Avatar>
-
-              <Box className="min-w-0">
-                <Typography className="text-sm font-black text-slate-900">
-                  {selected?.name ?? "-"}
-                </Typography>
-                <Typography className="text-xs text-slate-500">
-                  {selected?.id ?? "-"} • {selected?.phone ?? "-"}
-                </Typography>
+            {isMobile ? (
+              <Box className="flex justify-center pt-2">
+                <Box className="h-1.5 w-12 rounded-full bg-slate-300" />
               </Box>
-            </Stack>
+            ) : null}
 
-            <Stack direction="row" spacing={1} className="items-center">
-              {selected ? (
-                <Chip
-                  size="small"
-                  label={statusMeta(selected.status).label}
-                  sx={{
-                    ...statusChipSX(statusMeta(selected.status).tone),
-                    height: 24,
-                    fontSize: 11,
-                    fontWeight: 900,
-                  }}
-                />
-              ) : null}
-
-              <IconButton onClick={() => setOpenId(null)}>
-                <CloseRoundedIcon />
-              </IconButton>
-            </Stack>
-          </Stack>
-
-          <Divider className="my-4! border-slate-200!" />
-
-          {selected ? (
-            <Stack spacing={2}>
-              <Box className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                <Box
-                  className="relative bg-linear-to-br from-slate-900 to-slate-700"
-                  sx={{ minHeight: 220 }}
+            <Box className="px-4 py-3">
+              <Stack
+                direction="row"
+                spacing={1.5}
+                className="items-center justify-between"
+              >
+                <Stack
+                  direction="row"
+                  spacing={1.25}
+                  className="items-center min-w-0"
                 >
-                  <Box className="grid h-55 w-full place-items-center text-slate-300">
-                    <ForumRoundedIcon sx={{ fontSize: 56 }} />
+                  <Box
+                    className="grid h-10 w-10 shrink-0 place-items-center rounded-2xl border border-slate-200"
+                    sx={{
+                      bgcolor: "rgb(241 245 249)",
+                      color: "rgb(15 23 42)",
+                    }}
+                  >
+                    <ForumRoundedIcon sx={{ fontSize: 20 }} />
                   </Box>
 
-                  <Box
-                    className="absolute inset-0"
-                    sx={{
-                      background:
-                        "linear-gradient(to bottom, rgba(15,23,42,0.82), rgba(15,23,42,0.18))",
-                    }}
-                  />
+                  <Box className="min-w-0">
+                    <Typography className="truncate text-sm font-black text-slate-900">
+                      รายละเอียด Lead
+                    </Typography>
 
-                  <Box className="absolute inset-x-0 top-0 p-4 text-white">
-                    <Typography className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
-                      Lead Overview
+                    <Typography className="truncate text-xs text-slate-500">
+                      {selected ? `${selected.id} • ${selected.name}` : "-"}
                     </Typography>
-                    <Typography className="mt-2 text-xl font-extrabold">
-                      {selected.carName ?? "ยังไม่ได้ระบุรถ"}
-                    </Typography>
-                    <Typography className="mt-2 text-sm text-slate-200">
-                      {selected.pickupDate ?? "-"} ถึง{" "}
-                      {selected.returnDate ?? "-"}
-                    </Typography>
-                    <Typography className="mt-4 text-sm text-slate-300">
-                      ยอดประมาณ
-                    </Typography>
-                    <Typography className="text-2xl font-extrabold">
-                      {formatTHB(selected.amountEstimate)}
-                    </Typography>
+                  </Box>
+                </Stack>
+
+                <IconButton
+                  onClick={closeDrawer}
+                  sx={{
+                    border: "1px solid rgb(226 232 240)",
+                    bgcolor: "white",
+                    "&:hover": {
+                      bgcolor: "rgb(248 250 252)",
+                    },
+                  }}
+                >
+                  <CloseRoundedIcon />
+                </IconButton>
+              </Stack>
+            </Box>
+          </Box>
+
+          <Box className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+            {selected ? (
+              <Stack spacing={2}>
+                <Box className="overflow-hidden rounded-2xl border border-slate-200 bg-white mb-1">
+                  <Box
+                    className="relative bg-linear-to-br from-slate-900 to-slate-700"
+                    sx={{ minHeight: 220 }}
+                  >
+                    <Box className="grid h-55 w-full place-items-center text-slate-300">
+                      <ForumRoundedIcon sx={{ fontSize: 56 }} />
+                    </Box>
+
+                    <Box
+                      className="absolute inset-0"
+                      sx={{
+                        background:
+                          "linear-gradient(to bottom, rgba(15,23,42,0.82), rgba(15,23,42,0.18))",
+                      }}
+                    />
+
+                    <Box className="absolute inset-x-0 top-0 p-4 text-white">
+                      <Typography className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-300">
+                        Lead Overview
+                      </Typography>
+
+                      <Typography className="mt-2 text-xl font-extrabold">
+                        {selected.carName ?? "ยังไม่ได้ระบุรถ"}
+                      </Typography>
+
+                      <Typography className="mt-2 text-sm text-slate-200">
+                        {selected.name} • {channelLabel(selected.channel)}
+                      </Typography>
+
+                      <Typography className="mt-2 text-sm text-slate-200">
+                        {selected.pickupDate ?? "-"} ถึง {selected.returnDate ?? "-"}
+                      </Typography>
+
+                      <Typography className="mt-4 text-sm text-slate-300">
+                        ยอดประมาณ
+                      </Typography>
+                      <Typography className="text-2xl font-extrabold">
+                        {formatTHB(selected.amountEstimate)}
+                      </Typography>
+                    </Box>
                   </Box>
                 </Box>
-              </Box>
 
-              <SectionCard title="Quick actions">
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2}>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<MarkEmailReadRoundedIcon />}
-                    onClick={() => updateStatus(selected.id, "contacted")}
-                    sx={{
-                      flex: 1,
-                      textTransform: "none",
-                      borderRadius: 2.5,
-                      borderColor: "rgb(226 232 240)",
-                    }}
+                <Box className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <Stack direction="row" spacing={1} className="items-center">
+                    <Typography className="text-sm font-bold text-slate-900">
+                      สถานะปัจจุบัน
+                    </Typography>
+                    <LeadStatusChip status={selected.status} />
+                  </Stack>
+                </Box>
+
+                <Box className="rounded-2xl border border-slate-200 bg-white p-4">
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1}
+                    className="items-start sm:items-center justify-between"
                   >
-                    ติดตามแล้ว
-                  </Button>
+                    <Typography className="text-sm font-bold text-slate-900">
+                      เปลี่ยนสถานะอย่างรวดเร็ว
+                    </Typography>
 
-                  <Button
-                    size="small"
-                    variant="contained"
-                    startIcon={<CheckCircleRoundedIcon />}
-                    onClick={() => updateStatus(selected.id, "won")}
-                    sx={{
-                      flex: 1,
-                      textTransform: "none",
-                      bgcolor: "rgb(15 23 42)",
-                      boxShadow: "none",
-                      borderRadius: 2.5,
-                      "&:hover": { bgcolor: "rgb(2 6 23)", boxShadow: "none" },
-                    }}
+                    <Stack direction="row" spacing={1} className="items-center">
+                      <Typography className="text-xs text-slate-500">
+                        จะบันทึกเป็น
+                      </Typography>
+                      <LeadStatusChip status={selected.status} />
+                    </Stack>
+                  </Stack>
+
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={1.2}
+                    className="mt-4"
                   >
-                    ปิดการขาย
-                  </Button>
+                    {quickActions.map((action) => {
+                      const isActive = selected.status === action.status;
 
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<CloseRoundedIcon />}
-                    onClick={() => updateStatus(selected.id, "lost")}
-                    sx={{
-                      flex: 1,
-                      textTransform: "none",
-                      borderRadius: 2.5,
-                      borderColor: "rgb(226 232 240)",
-                    }}
-                  >
-                    ไม่สำเร็จ
-                  </Button>
-                </Stack>
-              </SectionCard>
+                      return (
+                        <Button
+                          key={action.status}
+                          variant={isActive ? "contained" : action.variant}
+                          startIcon={action.icon}
+                          onClick={() => updateStatus(selected.id, action.status)}
+                          sx={{
+                            flex: 1,
+                            textTransform: "none",
+                            borderRadius: 2.5,
+                            ...(isActive
+                              ? {
+                                  bgcolor: "rgb(15 23 42)",
+                                  color: "white",
+                                  boxShadow: "none",
+                                  "&:hover": {
+                                    bgcolor: "rgb(2 6 23)",
+                                    boxShadow: "none",
+                                  },
+                                }
+                              : action.sx),
+                          }}
+                        >
+                          {action.label}
+                        </Button>
+                      );
+                    })}
+                  </Stack>
+                </Box>
 
-              <Box className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <SectionCard title="ข้อมูลลูกค้า">
-                  <InfoRow label="ชื่อ" value={selected.name} />
-                  <InfoRow label="เบอร์โทร" value={selected.phone} />
-                  <InfoRow
-                    label="ช่องทาง"
-                    value={channelLabel(selected.channel)}
-                  />
-                  <InfoRow
-                    label="สถานะ"
-                    value={
-                      <Chip
-                        size="small"
-                        label={statusMeta(selected.status).label}
-                        sx={statusChipSX(statusMeta(selected.status).tone)}
-                      />
-                    }
-                  />
-                </SectionCard>
+                <Box className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  <SectionCard title="ข้อมูลลูกค้า">
+                    <InfoRow label="ชื่อ" value={selected.name} />
+                    <InfoRow label="เบอร์โทร" value={selected.phone} />
+                    <InfoRow label="ช่องทาง" value={channelLabel(selected.channel)} />
+                    <InfoRow
+                      label="สถานะ"
+                      value={<LeadStatusChip status={selected.status} />}
+                    />
+                  </SectionCard>
 
-                <SectionCard title="ข้อมูลการจอง">
-                  <InfoRow label="รถ" value={selected.carName ?? "-"} />
-                  <InfoRow
-                    label="วันรับรถ"
-                    value={selected.pickupDate ?? "-"}
-                  />
-                  <InfoRow
-                    label="วันคืนรถ"
-                    value={selected.returnDate ?? "-"}
-                  />
-                  <InfoRow
-                    label="ยอดประมาณ"
-                    value={formatTHB(selected.amountEstimate)}
-                  />
-                </SectionCard>
+                  <SectionCard title="ข้อมูลการจอง">
+                    <InfoRow label="รถ" value={selected.carName ?? "-"} />
+                    <InfoRow label="วันรับรถ" value={selected.pickupDate ?? "-"} />
+                    <InfoRow label="วันคืนรถ" value={selected.returnDate ?? "-"} />
+                    <InfoRow
+                      label="ยอดประมาณ"
+                      value={formatTHB(selected.amountEstimate)}
+                    />
+                  </SectionCard>
 
-                <SectionCard title="สถานที่">
-                  <InfoRow
-                    label="จุดรับรถ"
-                    value={selected.pickupPoint ?? "-"}
-                  />
-                  <InfoRow
-                    label="จุดคืนรถ"
-                    value={selected.returnPoint ?? "-"}
-                  />
-                  <InfoRow
-                    label="สร้างเมื่อ"
-                    value={formatDateTimeTH(selected.createdAt)}
-                  />
-                </SectionCard>
+                  <SectionCard title="สถานที่และเวลา">
+                    <InfoRow label="จุดรับรถ" value={selected.pickupPoint ?? "-"} />
+                    <InfoRow label="จุดคืนรถ" value={selected.returnPoint ?? "-"} />
+                    <InfoRow
+                      label="สร้างเมื่อ"
+                      value={formatDateTimeTH(selected.createdAt)}
+                    />
+                    <InfoRow
+                      label="ติดตาม"
+                      value={
+                        selected.followUpAt
+                          ? formatDateTimeTH(selected.followUpAt)
+                          : "-"
+                      }
+                    />
+                  </SectionCard>
 
-                <SectionCard title="สรุป lead">
-                  <Stack spacing={2}>
+                  <SectionCard title="สรุป lead">
                     <Box>
-                      <Stack
-                        direction="row"
-                        className="items-center justify-between"
-                      >
+                      <Stack direction="row" className="items-center justify-between">
                         <Typography className="text-xs text-slate-500">
                           ข้อความสรุป
                         </Typography>
@@ -1031,120 +1091,168 @@ export default function AdminLeadsPage() {
                         {buildSummaryText(selected)}
                       </Typography>
                     </Box>
+                  </SectionCard>
+                </Box>
+
+                <SectionCard title="ตั้งเวลาติดตาม">
+                  <Typography className="text-xs text-slate-500 flex items-center gap-1">
+                    <ScheduleRoundedIcon fontSize="inherit" />
+                    ตั้งวันและเวลาที่ต้องติดตามลูกค้ารายนี้
+                  </Typography>
+
+                  <TextField
+                    type="datetime-local"
+                    size="medium"
+                    value={followUpLocal}
+                    onChange={(e) => setFollowUpLocal(e.target.value)}
+                    sx={roundedFieldSX}
+                    fullWidth
+                    InputLabelProps={{ shrink: true }}
+                  />
+
+                  <Stack direction="row" spacing={1} className="flex-wrap">
+                    <Button
+                      size="medium"
+                      variant="contained"
+                      onClick={saveFollowUpFromInput}
+                      sx={{
+                        textTransform: "none",
+                        bgcolor: "rgb(15 23 42)",
+                        boxShadow: "none",
+                        borderRadius: 2,
+                        "&:hover": {
+                          bgcolor: "rgb(2 6 23)",
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      บันทึก
+                    </Button>
+
+                    <Button
+                      size="medium"
+                      variant="outlined"
+                      onClick={() => setFollowUpNowPlus(60)}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                        borderColor: "rgb(226 232 240)",
+                      }}
+                    >
+                      +1 ชม
+                    </Button>
+
+                    <Button
+                      size="medium"
+                      variant="outlined"
+                      onClick={setFollowUpTomorrow10}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                        borderColor: "rgb(226 232 240)",
+                      }}
+                    >
+                      พรุ่งนี้ 10:00
+                    </Button>
+
+                    <Button
+                      size="medium"
+                      variant="text"
+                      onClick={clearFollowUp}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2,
+                        color: "rgb(100 116 139)",
+                      }}
+                    >
+                      ล้าง
+                    </Button>
                   </Stack>
                 </SectionCard>
-              </Box>
 
-              <SectionCard title="ตั้งเวลาติดตาม (Follow-up)">
-                <Typography className="text-xs text-slate-500 flex items-center gap-1">
-                  <ScheduleRoundedIcon fontSize="inherit" />
-                  ตั้งวันและเวลาที่ต้องติดตามลูกค้ารายนี้
-                </Typography>
+                <SectionCard title="ติดต่อกลับ">
+                  <Stack spacing={1}>
+                    <Button
+                      component="a"
+                      href={toChatHref(selected.channel, selected)}
+                      target="_blank"
+                      rel="noreferrer"
+                      variant="contained"
+                      startIcon={<ChatRoundedIcon />}
+                      sx={{
+                        textTransform: "none",
+                        bgcolor: "rgb(15 23 42)",
+                        boxShadow: "none",
+                        borderRadius: 2.5,
+                        "&:hover": {
+                          bgcolor: "rgb(2 6 23)",
+                          boxShadow: "none",
+                        },
+                      }}
+                    >
+                      เปิดแชทพร้อมข้อความสรุป
+                    </Button>
 
-                <TextField
-                  type="datetime-local"
-                  size="small"
-                  value={followUpLocal}
-                  onChange={(e) => setFollowUpLocal(e.target.value)}
-                  sx={{ ...roundedFieldSX }}
-                  fullWidth
-                  InputLabelProps={{ shrink: true }}
-                />
+                    <Button
+                      component="a"
+                      href={toTelHref(selected.phone)}
+                      variant="outlined"
+                      startIcon={<CallRoundedIcon />}
+                      sx={{
+                        textTransform: "none",
+                        borderRadius: 2.5,
+                        borderColor: "rgb(226 232 240)",
+                      }}
+                    >
+                      โทรหาลูกค้า
+                    </Button>
+                  </Stack>
+                </SectionCard>
 
-                <Stack direction="row" spacing={1} className="flex-wrap">
+                <Stack direction="row" spacing={2} className="pt-0.5">
                   <Button
-                    size="small"
-                    variant="contained"
-                    onClick={saveFollowUpFromInput}
-                    sx={{
-                      textTransform: "none",
-                      bgcolor: "rgb(15 23 42)",
-                      boxShadow: "none",
-                      borderRadius: 2,
-                      "&:hover": { bgcolor: "rgb(2 6 23)", boxShadow: "none" },
-                    }}
-                  >
-                    บันทึก
-                  </Button>
-
-                  <Button
-                    size="small"
+                    fullWidth
+                    size="medium"
                     variant="outlined"
-                    onClick={() => setFollowUpNowPlus(60)}
+                    onClick={closeDrawer}
                     sx={{
                       textTransform: "none",
-                      borderRadius: 2,
                       borderColor: "rgb(226 232 240)",
+                      color: "rgb(15 23 42)",
+                      borderRadius: 2.5,
                     }}
                   >
-                    +1 ชม
+                    ปิดหน้าต่าง
                   </Button>
-
                   <Button
-                    size="small"
-                    variant="outlined"
-                    onClick={setFollowUpTomorrow10}
-                    sx={{
-                      textTransform: "none",
-                      borderRadius: 2,
-                      borderColor: "rgb(226 232 240)",
-                    }}
-                  >
-                    พรุ่งนี้ 10:00
-                  </Button>
-
-                  <Button
-                    size="small"
-                    variant="text"
-                    onClick={clearFollowUp}
-                    sx={{
-                      textTransform: "none",
-                      borderRadius: 2,
-                      color: "rgb(100 116 139)",
-                    }}
-                  >
-                    ล้าง
-                  </Button>
-                </Stack>
-              </SectionCard>
-
-              <SectionCard title="ติดต่อกลับ">
-                <Stack spacing={1}>
-                  <Button
-                    component="a"
-                    href={toChatHref(selected.channel, selected)}
-                    target="_blank"
-                    rel="noreferrer"
+                    fullWidth
+                    size="medium"
                     variant="contained"
-                    startIcon={<ChatRoundedIcon />}
+                    onClick={() => {
+                      setSnack({
+                        open: true,
+                        msg: "บันทึกข้อมูล Lead เรียบร้อย",
+                        type: "success",
+                      });
+                      closeDrawer();
+                    }}
                     sx={{
                       textTransform: "none",
                       bgcolor: "rgb(15 23 42)",
                       boxShadow: "none",
                       borderRadius: 2.5,
-                      "&:hover": { bgcolor: "rgb(2 6 23)", boxShadow: "none" },
+                      "&:hover": {
+                        bgcolor: "rgb(2 6 23)",
+                        boxShadow: "none",
+                      },
                     }}
                   >
-                    เปิดแชทพร้อมข้อความสรุป
-                  </Button>
-
-                  <Button
-                    component="a"
-                    href={toTelHref(selected.phone)}
-                    variant="outlined"
-                    startIcon={<CallRoundedIcon />}
-                    sx={{
-                      textTransform: "none",
-                      borderRadius: 2.5,
-                      borderColor: "rgb(226 232 240)",
-                    }}
-                  >
-                    โทรหาลูกค้า
+                    เสร็จสิ้น
                   </Button>
                 </Stack>
-              </SectionCard>
-            </Stack>
-          ) : null}
+              </Stack>
+            ) : null}
+          </Box>
         </Box>
       </Drawer>
 
@@ -1164,6 +1272,6 @@ export default function AdminLeadsPage() {
           {snack.msg}
         </Alert>
       </Snackbar>
-    </Box>
+    </>
   );
 }
