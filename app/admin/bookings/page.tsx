@@ -810,18 +810,27 @@ export default function AdminBookingsPage() {
                                     <Typography className="text-sm font-bold text-slate-900">
                                         สถานะปัจจุบัน
                                     </Typography>
-
-                                    <StatusChip s={nextStatus} />
+                                    <StatusChip s={selectedBooking.status} />
                                 </Stack>
                             </Box>
 
                             <Box className="rounded-2xl border border-slate-200 bg-white p-4">
-                                <Typography className="text-sm font-bold text-slate-900">
-                                    เลือกสถานะใหม่
-                                </Typography>
-                                <Typography className="mt-1 text-xs text-slate-500">
-                                    เลือกสถานะที่ต้องการ แล้วบันทึกการเปลี่ยนแปลง
-                                </Typography>
+                                <Stack
+                                    direction={{ xs: "column", sm: "row" }}
+                                    spacing={1}
+                                    className="items-start sm:items-center justify-between"
+                                >
+                                    <Typography className="text-sm font-bold text-slate-900">
+                                        เลือกสถานะใหม่
+                                    </Typography>
+
+                                    <Stack direction="row" spacing={1} className="items-center">
+                                        <Typography className="text-xs text-slate-500">
+                                            จะบันทึกเป็น
+                                        </Typography>
+                                        <StatusChip s={nextStatus} />
+                                    </Stack>
+                                </Stack>
 
                                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.2} className="mt-4">
                                     {quickActions.map((action) => {
@@ -855,61 +864,50 @@ export default function AdminBookingsPage() {
                                         );
                                     })}
                                 </Stack>
-
-                                <Box className="mt-4 rounded-xl border border-dashed border-slate-200 bg-slate-50 p-4">
-                                    <Stack spacing={1}>
-                                        <Stack direction="row" spacing={1} className="items-center">
-                                            <Typography className="text-sm font-bold text-slate-900">
-                                                เลือกสถานะใหม่
-                                            </Typography>
-
-                                            <StatusChip s={nextStatus} />
-                                        </Stack>
-                                    </Stack>
-                                </Box>
                             </Box>
 
                             <Box className="rounded-2xl border border-slate-200 bg-white p-4">
-                                <TextField
-                                    multiline
-                                    minRows={4}
-                                    fullWidth
-                                    label="หมายเหตุภายในแอดมิน"
-                                    value={adminNote}
-                                    onChange={(e) => setAdminNote(e.target.value)}
-                                    placeholder="เช่น ติดต่อแล้ว / รอเอกสาร / ลูกค้าขอเลื่อนเวลา"
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": {
-                                            borderRadius: "10px",
-                                        },
-                                    }}
-                                />
+                                <Stack spacing={2}>
+                                    <TextField
+                                        multiline
+                                        minRows={4}
+                                        fullWidth
+                                        label="หมายเหตุภายในแอดมิน"
+                                        value={adminNote}
+                                        onChange={(e) => setAdminNote(e.target.value)}
+                                        placeholder="เช่น ติดต่อแล้ว / รอเอกสาร / ลูกค้าขอเลื่อนเวลา"
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                borderRadius: "10px",
+                                            },
+                                        }}
+                                    />
 
-                                <TextField
-                                    multiline
-                                    minRows={3}
-                                    fullWidth
-                                    label="หมายเหตุที่ลูกค้าเห็น"
-                                    value={customerNote}
-                                    onChange={(e) => setCustomerNote(e.target.value)}
-                                    placeholder="เช่น การจองของคุณได้รับการยืนยันแล้ว / กรุณามาถึงก่อนเวลานัด"
-                                    className="mt-4"
-                                    sx={{
-                                        "& .MuiOutlinedInput-root": {
-                                            borderRadius: "10px",
-                                        },
-                                    }}
-                                />
+                                    <TextField
+                                        multiline
+                                        minRows={3}
+                                        fullWidth
+                                        label="หมายเหตุที่ลูกค้าเห็น"
+                                        value={customerNote}
+                                        onChange={(e) => setCustomerNote(e.target.value)}
+                                        placeholder="เช่น การจองของคุณได้รับการยืนยันแล้ว / กรุณามาถึงก่อนเวลานัด"
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                borderRadius: "10px",
+                                            },
+                                        }}
+                                    />
 
-                                <Box className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
-                                    <Stack spacing={1}>
-                                        <Typography className="text-xs font-medium text-slate-500">
-                                            ข้อมูลที่จะถูกอัปเดต
-                                        </Typography>
-                                        <InfoRow label="สร้างเมื่อ" value={selectedBooking.createdAt} />
-                                        <InfoRow label="อัปเดตล่าสุด" value={selectedBooking.updatedAt} />
-                                    </Stack>
-                                </Box>
+                                    <Box className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                        <Stack spacing={1}>
+                                            <Typography className="text-xs font-medium text-slate-500">
+                                                ข้อมูลที่จะถูกอัปเดต
+                                            </Typography>
+                                            <InfoRow label="สร้างเมื่อ" value={selectedBooking.createdAt} />
+                                            <InfoRow label="อัปเดตล่าสุด" value={selectedBooking.updatedAt} />
+                                        </Stack>
+                                    </Box>
+                                </Stack>
                             </Box>
 
                             <Stack direction="row" spacing={1} className="pt-0.5">
