@@ -227,7 +227,7 @@ export default function AdminCalendarNoMotion() {
           >
             <Stack direction="row" spacing={1.25} className="items-center">
               <Box className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-slate-50">
-                <EventNoteRoundedIcon fontSize="small" />
+                <EventNoteRoundedIcon fontSize="medium" />
               </Box>
               <Box>
                 <Typography className="text-sm font-bold text-slate-900">
@@ -248,7 +248,7 @@ export default function AdminCalendarNoMotion() {
               <Button
                 fullWidth={isMobile}
                 variant="outlined"
-                size="small"
+                size="medium"
                 startIcon={<ChevronLeftRoundedIcon />}
                 onClick={() => setCursor((d) => addDays(d, -7))}
                 sx={{
@@ -262,7 +262,7 @@ export default function AdminCalendarNoMotion() {
               <Button
                 fullWidth={isMobile}
                 variant="contained"
-                size="small"
+                size="medium"
                 endIcon={<ChevronRightRoundedIcon />}
                 onClick={() => setCursor((d) => addDays(d, 7))}
                 sx={{
@@ -408,7 +408,7 @@ export default function AdminCalendarNoMotion() {
                                   {booking.id}
                                 </Typography>
                                 <Chip
-                                  size="small"
+                                  size="medium"
                                   label={statusTone(booking.status).chip}
                                   sx={{
                                     height: 20,
@@ -456,7 +456,7 @@ export default function AdminCalendarNoMotion() {
 
             <Stack direction="row" spacing={1.25} className="items-center">
               <Box className="grid h-10 w-10 place-items-center rounded-2xl border border-slate-200 bg-slate-50">
-                <EventNoteRoundedIcon fontSize="small" />
+                <EventNoteRoundedIcon fontSize="medium" />
               </Box>
               <Box className="min-w-0">
                 <Typography className="font-extrabold text-slate-900">
@@ -481,7 +481,7 @@ export default function AdminCalendarNoMotion() {
                   สถานะ
                 </Typography>
                 <Chip
-                  size="small"
+                  size="medium"
                   label={statusTone(selected.status).chip}
                   sx={{
                     bgcolor: statusTone(selected.status).bg,
