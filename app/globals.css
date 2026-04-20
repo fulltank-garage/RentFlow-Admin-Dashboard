@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+:root {
+  --rf-admin-bg: #f8fafc;
+  --rf-admin-ink: #0f172a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--rf-admin-bg);
+  color: var(--rf-admin-ink);
+  font-family: "IBM Plex Sans Thai", "Noto Sans Thai", "Sarabun", ui-sans-serif,
+    system-ui, sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
