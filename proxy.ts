@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const TOKEN_COOKIE = "rf_admin_token";
+const SESSION_COOKIE = "rentflow_session";
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -10,7 +10,7 @@ export function proxy(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = req.cookies.get(TOKEN_COOKIE)?.value;
+  const token = req.cookies.get(SESSION_COOKIE)?.value;
   if (!token) {
     const url = req.nextUrl.clone();
     url.pathname = "/login";

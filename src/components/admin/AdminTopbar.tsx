@@ -17,7 +17,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import LanRoundedIcon from "@mui/icons-material/LanRounded";
 
-const TOKEN_COOKIE = "rf_admin_token";
+import { authService } from "@/src/services/auth/auth.service";
 
 type Props = {
   onOpenMobile: () => void;
@@ -30,8 +30,10 @@ export default function AdminTopbar({
 }: Props) {
   const router = useRouter();
 
-  function logout() {
-    document.cookie = `${TOKEN_COOKIE}=; path=/; max-age=0`;
+  async function logout() {
+    await authService.logout().catch(() => null);
+    document.cookie = "rentflow_session=; path=/; max-age=0";
+    document.cookie = "rf_admin_token=; path=/; max-age=0";
     router.replace("/login");
   }
 

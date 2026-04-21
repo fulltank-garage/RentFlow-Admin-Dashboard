@@ -16,41 +16,50 @@ import {
   Typography,
 } from "@mui/material";
 import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
-import AlternateEmailRoundedIcon from "@mui/icons-material/AlternateEmailRounded";
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
+import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 
-const TOKEN_COOKIE = "rf_admin_token";
-
-function isEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim());
-}
+import { authService } from "@/src/services/auth/auth.service";
 
 export default function Login() {
   const router = useRouter();
-  const [email, setEmail] = React.useState("");
+  const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
-  const canSubmit = isEmail(email) && password.length >= 6 && !loading;
+  const canSubmit = username.trim().length >= 3 && password.length >= 6 && !loading;
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
 
     if (!canSubmit) {
-      setError("กรุณากรอกอีเมลและรหัสผ่านให้ถูกต้อง");
+      setError("กรุณากรอกชื่อผู้ใช้และรหัสผ่านให้ถูกต้อง");
       return;
     }
 
-    setLoading(true);
-    window.setTimeout(() => {
-      document.cookie = `${TOKEN_COOKIE}=admin_demo_${Date.now()}; path=/; max-age=${
-        60 * 60 * 24 * 7
-      }`;
+    try {
+      setLoading(true);
+      document.cookie = "rf_admin_token=; path=/; max-age=0";
+      await authService.login({
+        username: username.trim(),
+        password,
+      });
+      await authService.getMe();
+
       const params = new URLSearchParams(window.location.search);
       router.replace(params.get("next") || "/admin/dashboard");
-    }, 350);
+    } catch (err: unknown) {
+      await authService.logout().catch(() => null);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "เข้าสู่ระบบผู้ดูแลไม่สำเร็จ"
+      );
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -124,16 +133,15 @@ export default function Login() {
 
             <Box component="form" onSubmit={handleSubmit} className="grid gap-4">
               <TextField
-                label="อีเมลผู้ดูแล"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                autoComplete="email"
-                inputMode="email"
+                label="ชื่อผู้ใช้หรืออีเมลผู้ดูแล"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                autoComplete="username"
                 fullWidth
                 InputProps={{
                   startAdornment: (
                     <InputAdornment position="start">
-                      <AlternateEmailRoundedIcon fontSize="small" />
+                      <PersonRoundedIcon fontSize="small" />
                     </InputAdornment>
                   ),
                 }}
