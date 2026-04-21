@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
-import { TENANTS, formatTHB } from "@/src/data/platform";
+import { TENANTS, formatTHB } from "@/src/services/platform/platform.data";
 
 const plans = ["Starter", "Growth", "Enterprise"] as const;
 

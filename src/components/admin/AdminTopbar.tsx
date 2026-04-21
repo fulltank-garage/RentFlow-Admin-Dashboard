@@ -42,18 +42,25 @@ export default function AdminTopbar({
       position="fixed"
       elevation={0}
       sx={{
-        bgcolor: "rgba(255,255,255,0.88)",
+        bgcolor: "rgba(255,255,255,0.68)",
         color: "rgb(15 23 42)",
-        backdropFilter: "blur(18px)",
-        borderBottom: "1px solid rgb(226 232 240)",
+        backdropFilter: "blur(26px) saturate(1.35)",
+        WebkitBackdropFilter: "blur(26px) saturate(1.35)",
+        borderBottom: "1px solid rgba(148,163,184,0.22)",
+        boxShadow: "0 16px 50px rgba(15,23,42,0.06)",
         width: { md: `calc(100% - ${drawerWidth}px)` },
         ml: { md: `${drawerWidth}px` },
       }}
     >
-      <Toolbar className="gap-3">
+      <Toolbar className="gap-3" sx={{ minHeight: 68 }}>
         <IconButton
           onClick={onOpenMobile}
-          sx={{ display: { xs: "inline-flex", md: "none" } }}
+          sx={{
+            display: { xs: "inline-flex", md: "none" },
+            bgcolor: "rgba(255,255,255,0.72)",
+            border: "1px solid rgba(148,163,184,0.22)",
+            "&:hover": { bgcolor: "rgba(255,255,255,0.92)" },
+          }}
         >
           <MenuRoundedIcon />
         </IconButton>
@@ -62,11 +69,11 @@ export default function AdminTopbar({
           <Chip
             icon={<LanRoundedIcon />}
             label="admin.rentflow.com"
-            className="hidden sm:inline-flex"
+            className="ios-chip hidden sm:inline-flex"
             sx={{
-              borderRadius: 3,
-              bgcolor: "rgb(241 245 249)",
-              border: "1px solid rgb(226 232 240)",
+              height: 36,
+              px: 0.5,
+              fontWeight: 700,
             }}
           />
         </Stack>
@@ -82,14 +89,33 @@ export default function AdminTopbar({
               fulltank-garage
             </Typography>
           </Box>
-          <Avatar sx={{ bgcolor: "rgb(15 23 42)" }}>R</Avatar>
+          <Avatar
+            sx={{
+              bgcolor: "transparent",
+              background:
+                "linear-gradient(135deg, var(--rf-ios-blue), var(--rf-ios-indigo))",
+              boxShadow: "0 10px 28px rgba(88,86,214,0.24)",
+              border: "2px solid rgba(255,255,255,0.8)",
+            }}
+          >
+            R
+          </Avatar>
           <Button
             variant="outlined"
             color="inherit"
             startIcon={<LogoutRoundedIcon />}
             onClick={logout}
-            className="rounded-xl!"
-            sx={{ borderColor: "rgb(203 213 225)" }}
+            sx={{
+              borderColor: "rgba(148,163,184,0.28)",
+              bgcolor: "rgba(255,255,255,0.58)",
+              boxShadow: "0 10px 28px rgba(15,23,42,0.05)",
+              fontWeight: 800,
+              px: 2,
+              "&:hover": {
+                borderColor: "rgba(100,116,139,0.36)",
+                bgcolor: "rgba(255,255,255,0.86)",
+              },
+            }}
           >
             ออกจากระบบ
           </Button>

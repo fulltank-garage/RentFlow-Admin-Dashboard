@@ -11,8 +11,8 @@ import {
   DOMAINS,
   PLATFORM_HOSTS,
   domainStatusLabel,
-  type DomainStatus,
-} from "@/src/data/platform";
+} from "@/src/services/platform/platform.data";
+import type { DomainStatus } from "@/src/services/platform/platform.types";
 
 function statusColor(status: DomainStatus) {
   if (status === "verified") return "success";

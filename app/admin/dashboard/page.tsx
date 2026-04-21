@@ -19,7 +19,7 @@ import {
   domainStatusLabel,
   formatTHB,
   tenantStatusLabel,
-} from "@/src/data/platform";
+} from "@/src/services/platform/platform.data";
 
 const totalRevenue = TENANTS.reduce(
   (sum, tenant) => sum + tenant.revenueThisMonth,

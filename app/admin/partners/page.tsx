@@ -7,7 +7,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { TENANTS, tenantStatusLabel, type TenantStatus } from "@/src/data/platform";
+import { TENANTS, tenantStatusLabel } from "@/src/services/platform/platform.data";
+import type { TenantStatus } from "@/src/services/platform/platform.types";
 
 function statusColor(status: TenantStatus) {
   if (status === "active") return "success";

@@ -31,10 +31,10 @@ export default function AdminSidebar({
   const pathname = usePathname();
 
   const content = (
-    <Box className="flex h-full flex-col bg-white">
+    <Box className="ios-glass flex h-full flex-col border-0">
       <Box className="p-4">
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Box className="grid h-11 w-11 place-items-center rounded-2xl bg-slate-900 text-white">
+          <Box className="grid h-11 w-11 place-items-center rounded-[18px] bg-linear-to-br from-sky-500 via-blue-500 to-indigo-500 text-white shadow-[0_14px_34px_rgba(59,130,246,0.28)]">
             <AdminPanelSettingsRoundedIcon />
           </Box>
           <Box>
@@ -42,15 +42,15 @@ export default function AdminSidebar({
               RentFlow Admin
             </Typography>
             <Typography className="text-xs text-slate-500">
-              Platform control center
+              ศูนย์จัดการระบบ
             </Typography>
           </Box>
         </Stack>
       </Box>
 
-      <Divider className="border-slate-200!" />
+      <Divider className="border-white/60!" />
 
-      <Box className="flex-1 overflow-auto px-2 py-3">
+      <Box className="ios-scrollbar flex-1 overflow-auto px-2 py-3">
         <List disablePadding className="grid gap-1">
           {ADMIN_NAV.map((item) => {
             const Icon = item.icon;
@@ -68,15 +68,29 @@ export default function AdminSidebar({
                   px: 2,
                   py: 1.35,
                   border: "1px solid",
-                  borderColor: active ? "rgb(203 213 225)" : "transparent",
-                  bgcolor: active ? "rgb(248 250 252)" : "transparent",
+                  borderColor: active
+                    ? "rgba(255,255,255,0.78)"
+                    : "transparent",
+                  bgcolor: active
+                    ? "rgba(255,255,255,0.82)"
+                    : "transparent",
+                  boxShadow: active
+                    ? "0 12px 34px rgba(15,23,42,0.08)"
+                    : "none",
+                  backdropFilter: active ? "blur(18px)" : "none",
                   "&:hover": {
-                    bgcolor: "rgb(248 250 252)",
-                    borderColor: "rgb(226 232 240)",
+                    bgcolor: "rgba(255,255,255,0.68)",
+                    borderColor: "rgba(255,255,255,0.78)",
+                    boxShadow: "0 12px 30px rgba(15,23,42,0.07)",
                   },
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 44, color: "rgb(15 23 42)" }}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 44,
+                    color: active ? "var(--rf-ios-blue)" : "rgb(15 23 42)",
+                  }}
+                >
                   <Icon />
                 </ListItemIcon>
                 <ListItemText
@@ -97,15 +111,15 @@ export default function AdminSidebar({
         </List>
       </Box>
 
-      <Box className="m-3 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-        <Typography className="text-xs font-bold uppercase tracking-[0.2em] text-slate-400">
-          Routing model
+      <Box className="ios-panel m-3 rounded-[28px] p-4">
+        <Typography className="text-xs font-bold tracking-[0.2em] text-slate-400">
+          ภาพรวมระบบ
         </Typography>
         <Typography className="mt-2 text-sm font-semibold text-slate-900">
           admin / partner / shop
         </Typography>
         <Typography className="mt-1 text-xs leading-5 text-slate-500">
-          หน้านี้ใช้สำหรับดูแลระบบรวม ส่วนร้านค้าใช้ subdomain แยกตาม tenant
+          จัดการร้านค้า หน้าสาธารณะ และการดูแลระบบกลางจากจุดเดียว
         </Typography>
       </Box>
     </Box>
@@ -113,8 +127,11 @@ export default function AdminSidebar({
 
   const paperSx = {
     width: drawerWidth,
-    borderRight: "1px solid rgb(226 232 240)",
-    bgcolor: "#fff",
+    borderRight: "1px solid rgba(148,163,184,0.22)",
+    bgcolor: "rgba(255,255,255,0.58)",
+    boxShadow: "18px 0 56px rgba(15,23,42,0.08)",
+    backdropFilter: "blur(28px) saturate(1.35)",
+    WebkitBackdropFilter: "blur(28px) saturate(1.35)",
   } as const;
 
   return (
