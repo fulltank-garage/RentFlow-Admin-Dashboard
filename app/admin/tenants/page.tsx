@@ -16,10 +16,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  platformApi,
-  type PlatformTenant,
-} from "@/src/lib/platform-api";
+import { tenantsService } from "@/src/services/tenants/tenants.service";
+import type { PlatformTenant } from "@/src/services/tenants/tenants.types";
 
 function tenantStatusLabel(status: PlatformTenant["status"]) {
   const map: Record<PlatformTenant["status"], string> = {
@@ -46,7 +44,7 @@ export default function TenantsPage() {
     setLoading(true);
     try {
       setError("");
-      const response = await platformApi.listTenants();
+      const response = await tenantsService.listTenants();
       setTenants(response.items);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "โหลดข้อมูลร้านไม่สำเร็จ");
@@ -67,7 +65,7 @@ export default function TenantsPage() {
     status: PlatformTenant["status"]
   ) {
     try {
-      await platformApi.updateTenantStatus(tenant.id, status);
+      await tenantsService.updateTenantStatus(tenant.id, status);
       setSnackOpen(true);
       await loadTenants();
     } catch (err: unknown) {

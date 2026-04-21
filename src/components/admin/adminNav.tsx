@@ -5,6 +5,7 @@ import DnsRoundedIcon from "@mui/icons-material/DnsRounded";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
 import ShieldRoundedIcon from "@mui/icons-material/ShieldRounded";
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 
 export type AdminNavItem = {
   label: string;
@@ -49,5 +50,11 @@ export const ADMIN_NAV: AdminNavItem[] = [
     href: "/admin/security",
     icon: ShieldRoundedIcon,
     caption: "Access policy",
+  },
+  {
+    label: "AI Insights",
+    href: "/admin/ai",
+    icon: AutoAwesomeRoundedIcon,
+    caption: "AI summary",
   },
 ];
