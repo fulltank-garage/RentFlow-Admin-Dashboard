@@ -9,13 +9,11 @@ import {
   Drawer,
   List,
   ListItemButton,
-  ListItemIcon,
   ListItemText,
   Stack,
   Typography,
 } from "@mui/material";
-import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
-import { ADMIN_NAV } from "./adminNav";
+import { ADMIN_NAV, type AdminNavGroup } from "./adminNav";
 
 type Props = {
   mobileOpen: boolean;
@@ -23,25 +21,41 @@ type Props = {
   drawerWidth?: number;
 };
 
+const GROUP_LABEL: Record<AdminNavGroup, string> = {
+  Operations: "งานปฏิบัติการ",
+  Partners: "ร้านและเจ้าของ",
+  Finance: "การเงิน",
+  Security: "ความปลอดภัย",
+  Settings: "ตั้งค่าและช่วยเหลือ",
+};
+
+const GROUPS: AdminNavGroup[] = [
+  "Operations",
+  "Partners",
+  "Finance",
+  "Security",
+  "Settings",
+];
+
 export default function AdminSidebar({
   mobileOpen,
   onMobileClose,
-  drawerWidth = 292,
+  drawerWidth = 296,
 }: Props) {
   const pathname = usePathname();
 
   const content = (
-    <Box className="ios-glass flex h-full flex-col border-0">
-      <Box className="p-4">
+    <Box
+      className="admin-shell h-full border-0"
+      sx={{ display: "flex", flexDirection: "column" }}
+    >
+      <Box className="p-4 md:p-5" sx={{ flex: "0 0 auto" }}>
         <Stack direction="row" spacing={1.5} alignItems="center">
-          <Box className="grid h-11 w-11 place-items-center rounded-[18px] bg-linear-to-br from-sky-500 via-blue-500 to-indigo-500 text-white shadow-[0_14px_34px_rgba(59,130,246,0.28)]">
-            <AdminPanelSettingsRoundedIcon />
+          <Box className="grid h-11 w-11 place-items-center overflow-hidden rounded-[18px] bg-[var(--rf-admin-blue-deep)] text-sm font-black tracking-[-0.05em] text-white shadow-[0_18px_38px_rgba(15,23,42,0.2)]">
+            RF
           </Box>
           <Box>
-            <Typography className="text-sm font-black tracking-tight text-slate-950">
-              RentFlow Admin
-            </Typography>
-            <Typography className="text-xs text-slate-500">
+            <Typography className="text-base font-extrabold tracking-[-0.03em] text-slate-950">
               ศูนย์จัดการระบบ
             </Typography>
           </Box>
@@ -50,88 +64,103 @@ export default function AdminSidebar({
 
       <Divider className="border-white/60!" />
 
-      <Box className="ios-scrollbar flex-1 overflow-auto px-2 py-3">
-        <List disablePadding className="grid gap-1">
-          {ADMIN_NAV.map((item) => {
-            const Icon = item.icon;
-            const active =
-              pathname === item.href || pathname?.startsWith(`${item.href}/`);
+      <Box
+        className="admin-scrollbar px-3 py-3"
+        sx={{
+          flex: "1 1 auto",
+          minHeight: 0,
+          overflowY: "auto",
+        }}
+      >
+        {GROUPS.map((group, index) => {
+          const items = ADMIN_NAV.filter((x) => x.group === group);
+          if (!items.length) return null;
 
-            return (
-              <ListItemButton
-                key={item.href}
-                component={Link}
-                href={item.href}
-                onClick={onMobileClose}
-                className="rounded-2xl!"
+          return (
+            <Box
+              key={group}
+              sx={{
+                mb: 1.25,
+                ...(index !== 0 && { borderTop: 0 }),
+              }}
+            >
+              <Typography
+                className="px-2 pb-2 pt-3 text-[13px] tracking-[-0.035em] text-slate-600"
+                sx={{ fontWeight: "900 !important" }}
+              >
+                {GROUP_LABEL[group]}
+              </Typography>
+
+              <List
+                dense={false}
+                disablePadding
                 sx={{
-                  px: 2,
-                  py: 1.35,
-                  border: "1px solid",
-                  borderColor: active
-                    ? "rgba(255,255,255,0.78)"
-                    : "transparent",
-                  bgcolor: active
-                    ? "rgba(255,255,255,0.82)"
-                    : "transparent",
-                  boxShadow: active
-                    ? "0 12px 34px rgba(15,23,42,0.08)"
-                    : "none",
-                  backdropFilter: active ? "blur(18px)" : "none",
-                  "&:hover": {
-                    bgcolor: "rgba(255,255,255,0.68)",
-                    borderColor: "rgba(255,255,255,0.78)",
-                    boxShadow: "0 12px 30px rgba(15,23,42,0.07)",
-                  },
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 0.75,
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 44,
-                    color: active ? "var(--rf-ios-blue)" : "rgb(15 23 42)",
-                  }}
-                >
-                  <Icon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Typography className="text-sm font-bold text-slate-900">
-                      {item.label}
-                    </Typography>
-                  }
-                  secondary={
-                    <Typography className="text-xs text-slate-500">
-                      {item.caption}
-                    </Typography>
-                  }
-                />
-              </ListItemButton>
-            );
-          })}
-        </List>
-      </Box>
+                {items.map((item) => {
+                  const active =
+                    pathname === item.href ||
+                    pathname?.startsWith(`${item.href}/`);
 
-      <Box className="ios-panel m-3 rounded-[28px] p-4">
-        <Typography className="text-xs font-bold tracking-[0.2em] text-slate-400">
-          ภาพรวมระบบ
-        </Typography>
-        <Typography className="mt-2 text-sm font-semibold text-slate-900">
-          admin / partner / shop
-        </Typography>
-        <Typography className="mt-1 text-xs leading-5 text-slate-500">
-          จัดการร้านค้า หน้าสาธารณะ และการดูแลระบบกลางจากจุดเดียว
-        </Typography>
+                  return (
+                    <ListItemButton
+                      key={item.href}
+                      component={Link}
+                      href={item.href}
+                      onClick={onMobileClose}
+                      className="mx-1 rounded-[22px]"
+                      sx={{
+                        borderRadius: "22px",
+                        minHeight: { xs: 52, md: 48 },
+                        px: 2.25,
+                        py: 1.35,
+                        bgcolor: active ? "#eef1f5" : "transparent",
+                        border: 0,
+                        boxShadow: "none",
+                        "&:hover": {
+                          backgroundColor: "#eef1f5",
+                          border: 0,
+                          boxShadow: "none",
+                        },
+                        transition:
+                          "background-color 180ms ease, box-shadow 180ms ease",
+                      }}
+                      selected={active}
+                    >
+                      <ListItemText
+                        primary={
+                          <Typography
+                            sx={{
+                              fontSize: { xs: 16.5, md: 15.2 },
+                              fontWeight: "400 !important",
+                              lineHeight: 1.3,
+                              letterSpacing: "-0.02em",
+                              color: "rgb(30 41 59)",
+                            }}
+                          >
+                            {item.label}
+                          </Typography>
+                        }
+                      />
+                    </ListItemButton>
+                  );
+                })}
+              </List>
+            </Box>
+          );
+        })}
       </Box>
     </Box>
   );
 
   const paperSx = {
     width: drawerWidth,
-    borderRight: "1px solid rgba(148,163,184,0.22)",
-    bgcolor: "rgba(255,255,255,0.58)",
-    boxShadow: "18px 0 56px rgba(15,23,42,0.08)",
-    backdropFilter: "blur(28px) saturate(1.35)",
-    WebkitBackdropFilter: "blur(28px) saturate(1.35)",
+    borderRight: 0,
+    bgcolor: "#ffffff",
+    boxShadow: "none",
   } as const;
 
   return (
@@ -143,7 +172,9 @@ export default function AdminSidebar({
         ModalProps={{ keepMounted: true }}
         sx={{
           display: { xs: "block", md: "none" },
-          "& .MuiDrawer-paper": paperSx,
+          "& .MuiDrawer-paper": {
+            ...paperSx,
+          },
         }}
       >
         {content}
@@ -154,7 +185,9 @@ export default function AdminSidebar({
         open
         sx={{
           display: { xs: "none", md: "block" },
-          "& .MuiDrawer-paper": paperSx,
+          "& .MuiDrawer-paper": {
+            ...paperSx,
+          },
         }}
       >
         {content}

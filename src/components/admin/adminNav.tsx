@@ -1,67 +1,55 @@
-import type { SvgIconComponent } from "@mui/icons-material";
-import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
-import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
-import DnsRoundedIcon from "@mui/icons-material/DnsRounded";
-import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
-import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
-import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
-import ShieldRoundedIcon from "@mui/icons-material/ShieldRounded";
-import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
+export type AdminNavGroup =
+  | "Operations"
+  | "Partners"
+  | "Finance"
+  | "Security"
+  | "Settings";
 
 export type AdminNavItem = {
   label: string;
   href: string;
-  icon: SvgIconComponent;
-  caption: string;
+  group: AdminNavGroup;
 };
 
 export const ADMIN_NAV: AdminNavItem[] = [
   {
-    label: "ภาพรวมระบบ",
+    label: "ภาพรวม",
     href: "/admin/dashboard",
-    icon: DashboardRoundedIcon,
-    caption: "Platform overview",
+    group: "Operations",
   },
   {
     label: "ร้านเช่ารถ",
     href: "/admin/tenants",
-    icon: StorefrontRoundedIcon,
-    caption: "Tenant management",
+    group: "Operations",
   },
   {
     label: "โดเมนร้าน",
     href: "/admin/domains",
-    icon: DnsRoundedIcon,
-    caption: "Subdomain routing",
+    group: "Operations",
   },
   {
     label: "เจ้าของร้าน",
     href: "/admin/partners",
-    icon: PeopleAltRoundedIcon,
-    caption: "Owner approval",
+    group: "Partners",
   },
   {
     label: "แผนและรายได้",
     href: "/admin/billing",
-    icon: PaymentsRoundedIcon,
-    caption: "Billing control",
-  },
-  {
-    label: "ตั้งค่าหน้ารวม",
-    href: "/admin/settings",
-    icon: SettingsRoundedIcon,
-    caption: "Marketplace content",
+    group: "Finance",
   },
   {
     label: "ความปลอดภัย",
     href: "/admin/security",
-    icon: ShieldRoundedIcon,
-    caption: "Access policy",
+    group: "Security",
   },
   {
-    label: "AI Insights",
+    label: "ตั้งค่าหน้ารวม",
+    href: "/admin/settings",
+    group: "Settings",
+  },
+  {
+    label: "ผู้ช่วยอัจฉริยะ",
     href: "/admin/ai",
-    icon: AutoAwesomeRoundedIcon,
-    caption: "AI summary",
+    group: "Settings",
   },
 ];
