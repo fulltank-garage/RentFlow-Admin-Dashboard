@@ -4,6 +4,7 @@ import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 import DnsRoundedIcon from "@mui/icons-material/DnsRounded";
 import PeopleAltRoundedIcon from "@mui/icons-material/PeopleAltRounded";
 import PaymentsRoundedIcon from "@mui/icons-material/PaymentsRounded";
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import ShieldRoundedIcon from "@mui/icons-material/ShieldRounded";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 
@@ -44,6 +45,12 @@ export const ADMIN_NAV: AdminNavItem[] = [
     href: "/admin/billing",
     icon: PaymentsRoundedIcon,
     caption: "Billing control",
+  },
+  {
+    label: "ตั้งค่าหน้ารวม",
+    href: "/admin/settings",
+    icon: SettingsRoundedIcon,
+    caption: "Marketplace content",
   },
   {
     label: "ความปลอดภัย",

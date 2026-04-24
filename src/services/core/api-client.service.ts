@@ -9,6 +9,24 @@ function apiBaseUrl() {
   );
 }
 
+export function resolveAdminAssetUrl(value?: string | null) {
+  const rawValue = value?.trim() || "";
+  if (
+    !rawValue ||
+    rawValue.startsWith("data:") ||
+    rawValue.startsWith("blob:") ||
+    rawValue.startsWith("//")
+  ) {
+    return rawValue;
+  }
+
+  if (/^https?:\/\//i.test(rawValue)) {
+    return rawValue;
+  }
+
+  return new URL(rawValue.startsWith("/") ? rawValue : `/${rawValue}`, apiBaseUrl()).toString();
+}
+
 const adminApiClient = axios.create({
   baseURL: apiBaseUrl(),
   withCredentials: true,
