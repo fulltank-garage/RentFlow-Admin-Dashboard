@@ -20,6 +20,7 @@ import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 
 import { authService } from "@/src/services/auth/auth.service";
+import { deleteClientCookie } from "@/src/lib/client-cookie";
 
 export default function Login() {
   const router = useRouter();
@@ -41,7 +42,8 @@ export default function Login() {
 
     try {
       setLoading(true);
-      document.cookie = "rf_admin_token=; path=/; max-age=0";
+      deleteClientCookie("rf_admin_token");
+      deleteClientCookie("rentflow_session");
       await authService.login({
         username: username.trim(),
         password,

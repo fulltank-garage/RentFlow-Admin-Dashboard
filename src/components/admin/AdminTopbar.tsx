@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { authService } from "@/src/services/auth/auth.service";
+import { deleteClientCookie } from "@/src/lib/client-cookie";
 
 type Props = {
   onOpenMobile: () => void;
@@ -59,8 +60,9 @@ export default function AdminTopbar({
 
   async function logout() {
     await authService.logout().catch(() => null);
-    document.cookie = "rentflow_session=; path=/; max-age=0";
-    document.cookie = "rf_admin_token=; path=/; max-age=0";
+    deleteClientCookie("rentflow_admin_session");
+    deleteClientCookie("rentflow_session");
+    deleteClientCookie("rf_admin_token");
     router.replace("/login");
   }
 

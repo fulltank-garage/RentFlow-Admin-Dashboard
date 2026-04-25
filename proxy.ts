@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const SESSION_COOKIE = "rentflow_session";
+const SESSION_COOKIE = "rentflow_admin_session";
 
 export function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;

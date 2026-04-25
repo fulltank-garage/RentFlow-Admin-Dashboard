@@ -1,7 +1,9 @@
 import { requestAdmin } from "../core/api-client.service";
 import type {
   PlatformTenantListResponse,
+  PlatformTenantBookingMode,
   PlatformTenantStatus,
+  UpdateTenantSettingsResponse,
 } from "./tenants.types";
 
 export const tenantsService = {
@@ -10,11 +12,27 @@ export const tenantsService = {
   },
 
   updateTenantStatus(tenantId: string, status: PlatformTenantStatus) {
-    return requestAdmin<null>(
+    return requestAdmin<UpdateTenantSettingsResponse>(
       `/platform/tenants/${encodeURIComponent(tenantId)}/status`,
       {
         method: "PATCH",
         data: { status },
+      }
+    );
+  },
+
+  updateTenantSettings(
+    tenantId: string,
+    input: {
+      status: PlatformTenantStatus;
+      bookingMode: PlatformTenantBookingMode;
+    }
+  ) {
+    return requestAdmin<UpdateTenantSettingsResponse>(
+      `/platform/tenants/${encodeURIComponent(tenantId)}/status`,
+      {
+        method: "PATCH",
+        data: input,
       }
     );
   },

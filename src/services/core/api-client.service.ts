@@ -2,7 +2,7 @@ import axios from "axios";
 
 import type { ApiResponse } from "../types/types";
 
-function apiBaseUrl() {
+export function getAdminApiBaseUrl() {
   return (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(
     /\/$/,
     ""
@@ -24,14 +24,15 @@ export function resolveAdminAssetUrl(value?: string | null) {
     return rawValue;
   }
 
-  return new URL(rawValue.startsWith("/") ? rawValue : `/${rawValue}`, apiBaseUrl()).toString();
+  return new URL(rawValue.startsWith("/") ? rawValue : `/${rawValue}`, getAdminApiBaseUrl()).toString();
 }
 
 const adminApiClient = axios.create({
-  baseURL: apiBaseUrl(),
+  baseURL: getAdminApiBaseUrl(),
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
+    "X-RentFlow-App": "admin",
   },
 });
 
@@ -48,7 +49,10 @@ export async function requestAdmin<T>(
       url: path,
       method: init?.method || "GET",
       data: init?.data,
-      headers: init?.headers,
+      headers: {
+        "X-RentFlow-App": "admin",
+        ...init?.headers,
+      },
     });
 
     return response.data.data;

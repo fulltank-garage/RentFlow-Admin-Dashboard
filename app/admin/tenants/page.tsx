@@ -16,6 +16,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useAdminRealtimeRefresh } from "@/src/hooks/realtime/useAdminRealtimeRefresh";
 import { tenantsService } from "@/src/services/tenants/tenants.service";
 import type { PlatformTenant } from "@/src/services/tenants/tenants.types";
 
@@ -32,6 +33,10 @@ function statusColor(status: PlatformTenant["status"]) {
   if (status === "active") return "success";
   if (status === "pending") return "warning";
   return "error";
+}
+
+function bookingModeLabel(mode?: PlatformTenant["bookingMode"]) {
+  return mode === "chat" ? "จองผ่านแชทก่อน" : "จองและชำระในระบบ";
 }
 
 export default function TenantsPage() {
@@ -60,14 +65,64 @@ export default function TenantsPage() {
     return () => window.clearTimeout(timer);
   }, [loadTenants]);
 
+  useAdminRealtimeRefresh({
+    events: [
+      "tenant.updated",
+      "booking.created",
+      "booking.updated",
+      "booking.cancelled",
+      "payment.created",
+      "payment.updated",
+    ],
+    onRefresh: loadTenants,
+  });
+
+  function patchTenant(
+    tenantId: string,
+    patch: Partial<PlatformTenant>
+  ) {
+    setTenants((current) =>
+      current.map((item) =>
+        item.id === tenantId ? { ...item, ...patch } : item
+      )
+    );
+  }
+
   async function updateStatus(
     tenant: PlatformTenant,
     status: PlatformTenant["status"]
   ) {
     try {
-      await tenantsService.updateTenantStatus(tenant.id, status);
+      const response = await tenantsService.updateTenantSettings(tenant.id, {
+        status,
+        bookingMode: tenant.bookingMode || "payment",
+      });
+      patchTenant(tenant.id, {
+        status,
+        bookingMode: tenant.bookingMode || "payment",
+        ...response?.tenant,
+      });
       setSnackOpen(true);
-      await loadTenants();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "อัปเดตร้านไม่สำเร็จ");
+    }
+  }
+
+  async function updateBookingMode(
+    tenant: PlatformTenant,
+    bookingMode: NonNullable<PlatformTenant["bookingMode"]>
+  ) {
+    try {
+      const response = await tenantsService.updateTenantSettings(tenant.id, {
+        status: tenant.status,
+        bookingMode,
+      });
+      patchTenant(tenant.id, {
+        status: tenant.status,
+        bookingMode,
+        ...response?.tenant,
+      });
+      setSnackOpen(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "อัปเดตร้านไม่สำเร็จ");
     }
@@ -115,6 +170,11 @@ export default function TenantsPage() {
                         color={statusColor(tenant.status)}
                         label={tenantStatusLabel(tenant.status)}
                       />
+                      <Chip
+                        size="small"
+                        label={bookingModeLabel(tenant.bookingMode)}
+                        className="admin-chip admin-chip-blue"
+                      />
                     </Stack>
                     <Typography className="mt-1 text-sm text-slate-500">
                       {tenant.ownerEmail} • {tenant.publicDomain}
@@ -123,10 +183,13 @@ export default function TenantsPage() {
 
                   <Box>
                     <Typography className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                      Plan / Slug
+                      แผน / โหมดจอง
                     </Typography>
                     <Typography className="mt-1 text-sm font-semibold text-slate-900">
-                      {tenant.plan} • {tenant.domainSlug}
+                      {tenant.plan} • {bookingModeLabel(tenant.bookingMode)}
+                    </Typography>
+                    <Typography className="mt-1 text-xs text-slate-500">
+                      slug: {tenant.domainSlug}
                     </Typography>
                   </Box>
 
@@ -147,6 +210,22 @@ export default function TenantsPage() {
                       <MenuItem value="active">ใช้งานอยู่</MenuItem>
                       <MenuItem value="pending">รอตรวจสอบ</MenuItem>
                       <MenuItem value="suspended">ระงับชั่วคราว</MenuItem>
+                    </TextField>
+                    <TextField
+                      select
+                      size="small"
+                      label="โหมดการจอง"
+                      value={tenant.bookingMode || "payment"}
+                      onChange={(event) =>
+                        updateBookingMode(
+                          tenant,
+                          event.target.value as NonNullable<PlatformTenant["bookingMode"]>
+                        )
+                      }
+                      className="w-full sm:w-56"
+                    >
+                      <MenuItem value="payment">จองและชำระในระบบ</MenuItem>
+                      <MenuItem value="chat">จองผ่านแชทก่อน</MenuItem>
                     </TextField>
                     <Button
                       href={`https://${tenant.publicDomain}`}

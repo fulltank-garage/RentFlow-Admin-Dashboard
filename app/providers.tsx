@@ -36,6 +36,14 @@ const theme = createTheme({
         root: {
           textTransform: "none",
           boxShadow: "none",
+          minHeight: 46,
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          minHeight: 46,
         },
       },
     },
