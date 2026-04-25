@@ -4,8 +4,10 @@ import * as React from "react";
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
+  Chip,
   CircularProgress,
   Stack,
   Typography,
@@ -28,10 +30,28 @@ function planLabel(plan: string) {
   return plan || "ไม่ระบุแผน";
 }
 
+function invoiceStatusLabel(status: string) {
+  const labels: Record<string, string> = {
+    open: "รอชำระ",
+    paid: "ชำระแล้ว",
+    overdue: "เกินกำหนด",
+    void: "ยกเลิก",
+    draft: "แบบร่าง",
+  };
+  return labels[status] || status;
+}
+
+function invoiceStatusClass(status: string) {
+  if (status === "paid") return "admin-chip admin-chip-green";
+  if (status === "overdue" || status === "void") return "admin-chip admin-chip-rose";
+  return "admin-chip admin-chip-orange";
+}
+
 export default function BillingPage() {
   const [billing, setBilling] = React.useState<PlatformBilling | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
+  const [busyInvoiceId, setBusyInvoiceId] = React.useState("");
 
   const loadBilling = React.useCallback(async () => {
     setLoading(true);
@@ -44,6 +64,26 @@ export default function BillingPage() {
       setLoading(false);
     }
   }, []);
+
+  async function updateInvoice(
+    invoiceId: string,
+    status: "open" | "paid" | "overdue" | "void",
+    amount?: number
+  ) {
+    setBusyInvoiceId(invoiceId);
+    try {
+      await billingService.updateInvoiceStatus(invoiceId, {
+        status,
+        paidAmount: status === "paid" ? amount : 0,
+        paymentMethod: status === "paid" ? "manual" : "",
+      });
+      await loadBilling();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "อัปเดตใบแจ้งหนี้ไม่สำเร็จ");
+    } finally {
+      setBusyInvoiceId("");
+    }
+  }
 
   React.useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -210,12 +250,44 @@ export default function BillingPage() {
                           รอบ {invoice.period} • {planLabel(invoice.plan)}
                         </Typography>
                         <Typography className="mt-1 text-sm text-slate-500">
-                          ร้าน {invoice.tenantId} • สถานะ {invoice.status}
+                          ร้าน {invoice.tenantId}
                         </Typography>
+                        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" className="mt-2">
+                          <Chip
+                            label={invoiceStatusLabel(invoice.status)}
+                            className={invoiceStatusClass(invoice.status)}
+                          />
+                          {invoice.dueAt ? (
+                            <Chip
+                              label={`ครบกำหนด ${new Intl.DateTimeFormat("th-TH", { dateStyle: "medium" }).format(new Date(invoice.dueAt))}`}
+                              className="admin-chip"
+                            />
+                          ) : null}
+                        </Stack>
                       </Box>
-                      <Typography className="font-black text-slate-950">
-                        {formatTHB(invoice.amount)}
-                      </Typography>
+                      <Stack spacing={1} className="md:items-end">
+                        <Typography className="font-black text-slate-950">
+                          {formatTHB(invoice.amount)}
+                        </Typography>
+                        <Stack direction="row" spacing={1}>
+                          <Button
+                            size="small"
+                            variant="contained"
+                            disabled={busyInvoiceId === invoice.id || invoice.status === "paid"}
+                            onClick={() => updateInvoice(invoice.id, "paid", invoice.amount)}
+                          >
+                            ชำระแล้ว
+                          </Button>
+                          <Button
+                            size="small"
+                            variant="outlined"
+                            disabled={busyInvoiceId === invoice.id || invoice.status === "void"}
+                            onClick={() => updateInvoice(invoice.id, "void")}
+                          >
+                            ยกเลิก
+                          </Button>
+                        </Stack>
+                      </Stack>
                     </Box>
                   ))
                 )}

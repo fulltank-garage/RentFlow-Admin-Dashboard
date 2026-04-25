@@ -8,9 +8,14 @@ export type PlatformBilling = {
     period: string;
     plan: string;
     amount: number;
+    paidAmount?: number;
     status: string;
     issuedAt?: string;
+    dueAt?: string;
     paidAt?: string;
+    paymentMethod?: string;
+    paidBy?: string;
+    note?: string;
   }>;
   plans: Array<{
     plan: string;
@@ -23,3 +28,5 @@ export type PlatformBilling = {
     activeTenantCount: number;
   };
 };
+
+export type PlatformInvoiceStatus = "open" | "paid" | "overdue" | "void";

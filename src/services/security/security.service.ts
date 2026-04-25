@@ -1,5 +1,9 @@
 import { requestAdmin } from "../core/api-client.service";
-import type { PlatformSecurity } from "./security.types";
+import type {
+  PlatformSecurity,
+  PlatformSecurityMember,
+  PlatformSecurityMemberInput,
+} from "./security.types";
 
 export const securityService = {
   getSecurity() {
@@ -15,6 +19,32 @@ export const securityService = {
       {
         method: "PATCH",
         data: input,
+      }
+    );
+  },
+
+  createPlatformMember(input: PlatformSecurityMemberInput) {
+    return requestAdmin<PlatformSecurityMember>("/platform/security/members", {
+      method: "POST",
+      data: input,
+    });
+  },
+
+  updatePlatformMember(id: string, input: PlatformSecurityMemberInput) {
+    return requestAdmin<PlatformSecurityMember>(
+      `/platform/security/members/${encodeURIComponent(id)}`,
+      {
+        method: "PATCH",
+        data: input,
+      }
+    );
+  },
+
+  deletePlatformMember(id: string) {
+    return requestAdmin<null>(
+      `/platform/security/members/${encodeURIComponent(id)}`,
+      {
+        method: "DELETE",
       }
     );
   },

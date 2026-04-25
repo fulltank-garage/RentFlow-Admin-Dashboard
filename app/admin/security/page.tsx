@@ -10,7 +10,9 @@ import {
   Chip,
   CircularProgress,
   Divider,
+  MenuItem,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import { useAdminRealtimeRefresh } from "@/src/hooks/realtime/useAdminRealtimeRefresh";
@@ -23,6 +25,7 @@ function statusLabel(status: string) {
     configured: "ตั้งค่าแล้ว",
     pending: "รอตั้งค่า",
     missing: "ยังไม่พร้อม",
+    disabled: "ปิดใช้งาน",
   };
   return map[status] || status;
 }
@@ -33,11 +36,36 @@ function statusColor(status: string) {
   return "error";
 }
 
+const PLATFORM_PERMISSION_OPTIONS = [
+  { key: "tenants.write", label: "จัดการร้าน" },
+  { key: "billing.write", label: "จัดการ billing" },
+  { key: "security.write", label: "จัดการสิทธิ์" },
+  { key: "domains.write", label: "จัดการโดเมน" },
+  { key: "reports.read", label: "ดูรายงาน" },
+] as const;
+
+function platformRoleLabel(role?: string) {
+  const labels: Record<string, string> = {
+    owner: "เจ้าของระบบ",
+    admin: "ผู้ดูแลระบบ",
+    support: "ดูแลร้าน",
+    finance: "การเงิน",
+  };
+  return labels[role || ""] || role || "-";
+}
+
 export default function SecurityPage() {
   const [security, setSecurity] = React.useState<PlatformSecurity | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
   const [busyUserId, setBusyUserId] = React.useState("");
+  const [memberEmail, setMemberEmail] = React.useState("");
+  const [memberName, setMemberName] = React.useState("");
+  const [memberRole, setMemberRole] = React.useState<"owner" | "admin" | "support" | "finance">("admin");
+  const [memberPermissions, setMemberPermissions] = React.useState<string[]>([
+    "tenants.write",
+    "domains.write",
+  ]);
 
   const loadSecurity = React.useCallback(async () => {
     setLoading(true);
@@ -82,6 +110,48 @@ export default function SecurityPage() {
       setError(err instanceof Error ? err.message : "ล็อกผู้ใช้ไม่สำเร็จ");
     } finally {
       setBusyUserId("");
+    }
+  }
+
+  function togglePermission(permission: string) {
+    setMemberPermissions((current) =>
+      current.includes(permission)
+        ? current.filter((item) => item !== permission)
+        : [...current, permission]
+    );
+  }
+
+  async function createPlatformMember() {
+    try {
+      await securityService.createPlatformMember({
+        email: memberEmail,
+        name: memberName,
+        role: memberRole,
+        permissions: memberRole === "owner" ? ["*"] : memberPermissions,
+        status: "active",
+      });
+      setMemberEmail("");
+      setMemberName("");
+      await loadSecurity();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "เพิ่มผู้ดูแลระบบไม่สำเร็จ");
+    }
+  }
+
+  async function togglePlatformMemberStatus(memberId: string, nextStatus: string) {
+    const member = security?.platformMembers?.find((item) => item.id === memberId);
+    if (!member) return;
+    try {
+      await securityService.updatePlatformMember(memberId, {
+        email: member.email,
+        name: member.name,
+        role: member.role,
+        permissions: member.permissions || [],
+        status: nextStatus,
+      });
+      await loadSecurity();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "อัปเดตผู้ดูแลระบบไม่สำเร็จ");
     }
   }
 
@@ -153,6 +223,89 @@ export default function SecurityPage() {
           </Card>
 
           <Card elevation={0} className="rounded-3xl! bg-white">
+            <CardContent className="p-5!">
+              <Typography className="text-lg font-black text-slate-950">
+                ทีมผู้ดูแลระบบกลาง
+              </Typography>
+              <Typography className="mt-1 text-sm text-slate-500">
+                เพิ่มผู้ดูแลระบบและกำหนดสิทธิ์ให้แยกตามหน้าที่
+              </Typography>
+              <Stack spacing={1.5} className="mt-4">
+                <Stack direction={{ xs: "column", md: "row" }} spacing={1.5}>
+                  <TextField label="อีเมล" value={memberEmail} onChange={(e) => setMemberEmail(e.target.value)} fullWidth />
+                  <TextField label="ชื่อ" value={memberName} onChange={(e) => setMemberName(e.target.value)} fullWidth />
+                  <TextField select label="บทบาท" value={memberRole} onChange={(e) => setMemberRole(e.target.value as typeof memberRole)} className="md:min-w-48">
+                    <MenuItem value="admin">ผู้ดูแลระบบ</MenuItem>
+                    <MenuItem value="support">ดูแลร้าน</MenuItem>
+                    <MenuItem value="finance">การเงิน</MenuItem>
+                    <MenuItem value="owner">เจ้าของระบบ</MenuItem>
+                  </TextField>
+                </Stack>
+                {memberRole !== "owner" ? (
+                  <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
+                    {PLATFORM_PERMISSION_OPTIONS.map((permission) => {
+                      const active = memberPermissions.includes(permission.key);
+                      return (
+                        <Button
+                          key={permission.key}
+                          size="small"
+                          variant={active ? "contained" : "outlined"}
+                          onClick={() => togglePermission(permission.key)}
+                        >
+                          {permission.label}
+                        </Button>
+                      );
+                    })}
+                  </Stack>
+                ) : null}
+                <Button variant="contained" onClick={createPlatformMember} className="self-start">
+                  เพิ่มผู้ดูแลระบบ
+                </Button>
+              </Stack>
+              <Stack divider={<Divider />} className="mt-5">
+                {(security.platformMembers || []).map((member) => (
+                  <Box key={member.id} className="py-3">
+                    <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="justify-between">
+                      <Box>
+                        <Typography className="font-black text-slate-950">
+                          {member.name || member.email}
+                        </Typography>
+                        <Typography className="mt-1 text-sm text-slate-500">
+                          {member.email} • {platformRoleLabel(member.role)}
+                        </Typography>
+                        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" className="mt-2">
+                          <Chip label={statusLabel(member.status)} className={member.status === "active" ? "admin-chip admin-chip-green" : "admin-chip admin-chip-rose"} />
+                          {(member.permissions || []).slice(0, 6).map((permission) => (
+                            <Chip key={`${member.id}-${permission}`} label={permission === "*" ? "ทุกสิทธิ์" : permission} className="admin-chip" />
+                          ))}
+                        </Stack>
+                      </Box>
+                      <Stack direction="row" spacing={1} className="md:self-center">
+                        <Button
+                          variant="outlined"
+                          onClick={() => togglePlatformMemberStatus(member.id, member.status === "active" ? "disabled" : "active")}
+                        >
+                          {member.status === "active" ? "ปิดใช้งาน" : "เปิดใช้งาน"}
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={async () => {
+                            await securityService.deletePlatformMember(member.id);
+                            await loadSecurity();
+                          }}
+                        >
+                          ลบ
+                        </Button>
+                      </Stack>
+                    </Stack>
+                  </Box>
+                ))}
+              </Stack>
+            </CardContent>
+          </Card>
+
+          <Card elevation={0} className="rounded-3xl! bg-white">
             <CardContent className="p-0!">
               {(security.members || []).length === 0 ? (
                 <Box className="p-5">
@@ -187,6 +340,26 @@ export default function SecurityPage() {
                   </Box>
                 ))
               )}
+            </CardContent>
+          </Card>
+
+          <Card elevation={0} className="rounded-3xl! bg-white">
+            <CardContent className="p-5!">
+              <Typography className="text-lg font-black text-slate-950">
+                ประวัติการเข้าสู่ระบบล่าสุด
+              </Typography>
+              <Stack divider={<Divider />} className="mt-3">
+                {(security.sessionAudits || []).slice(0, 12).map((item) => (
+                  <Box key={item.id} className="py-3">
+                    <Typography className="font-black text-slate-950">
+                      {item.userEmail || item.userId || "-"} • {item.action === "logout" ? "ออกจากระบบ" : "เข้าสู่ระบบ"}
+                    </Typography>
+                    <Typography className="mt-1 text-sm text-slate-500">
+                      {item.app} • {item.ip || "-"} • {new Intl.DateTimeFormat("th-TH", { dateStyle: "medium", timeStyle: "short" }).format(new Date(item.createdAt))}
+                    </Typography>
+                  </Box>
+                ))}
+              </Stack>
             </CardContent>
           </Card>
         </>
