@@ -1,32 +1,68 @@
+"use client";
+
+import * as React from "react";
 import {
+  Alert,
   Box,
   Card,
   CardContent,
   Chip,
+  CircularProgress,
   Divider,
   Stack,
   Typography,
 } from "@mui/material";
+import { useAdminRealtimeRefresh } from "@/src/hooks/realtime/useAdminRealtimeRefresh";
+import { securityService } from "@/src/services/security/security.service";
+import type { PlatformSecurity } from "@/src/services/security/security.types";
 
-const policies = [
-  {
-    title: "Platform admin",
-    detail: "จัดการ tenant, domain, owner approval และ billing",
-    status: "ต้องใช้สิทธิ์สูงสุด",
-  },
-  {
-    title: "Partner owner",
-    detail: "จัดการร้านของตัวเองผ่าน partner.rentflow.com เท่านั้น",
-    status: "จำกัดตาม tenant",
-  },
-  {
-    title: "Public storefront",
-    detail: "ลูกค้าเข้าผ่าน subdomain ของร้าน เช่น shop1.rentflow.com",
-    status: "อ่านข้อมูลสาธารณะ",
-  },
-];
+function statusLabel(status: string) {
+  const map: Record<string, string> = {
+    active: "เปิดใช้งาน",
+    configured: "ตั้งค่าแล้ว",
+    pending: "รอตั้งค่า",
+    missing: "ยังไม่พร้อม",
+  };
+  return map[status] || status;
+}
+
+function statusColor(status: string) {
+  if (status === "active" || status === "configured") return "success";
+  if (status === "pending") return "warning";
+  return "error";
+}
 
 export default function SecurityPage() {
+  const [security, setSecurity] = React.useState<PlatformSecurity | null>(null);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState("");
+
+  const loadSecurity = React.useCallback(async () => {
+    setLoading(true);
+    try {
+      setError("");
+      setSecurity(await securityService.getSecurity());
+    } catch (err: unknown) {
+      setError(
+        err instanceof Error ? err.message : "โหลดข้อมูลความปลอดภัยไม่สำเร็จ"
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  React.useEffect(() => {
+    const timer = window.setTimeout(() => {
+      loadSecurity();
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [loadSecurity]);
+
+  useAdminRealtimeRefresh({
+    events: ["tenant.updated", "support.changed"],
+    onRefresh: loadSecurity,
+  });
+
   return (
     <Stack spacing={3}>
       <Box>
@@ -34,30 +70,67 @@ export default function SecurityPage() {
           ความปลอดภัยและสิทธิ์การเข้าถึง
         </Typography>
         <Typography className="mt-2 text-sm text-slate-500">
-          แยกสิทธิ์ระหว่าง admin รวม, owner แต่ละร้าน และลูกค้าหน้าร้าน
+          แยกสิทธิ์ระหว่างผู้ดูแลระบบ เจ้าของร้าน และลูกค้าหน้าร้าน
         </Typography>
       </Box>
 
-      <Card elevation={0} className="rounded-3xl! border border-slate-200">
-        <CardContent className="p-0!">
-          {policies.map((policy, index) => (
-            <Box key={policy.title}>
-              <Box className="grid gap-3 p-5 md:grid-cols-[1fr_auto] md:items-center">
-                <Box>
-                  <Typography className="text-lg font-black text-slate-950">
-                    {policy.title}
+      {error ? <Alert severity="error">{error}</Alert> : null}
+
+      {loading ? (
+        <Box className="grid min-h-72 place-items-center rounded-[32px] bg-white">
+          <CircularProgress />
+        </Box>
+      ) : security ? (
+        <>
+          <Box className="grid gap-4 md:grid-cols-3 xl:grid-cols-6">
+            {[
+              ["ผู้ดูแลระบบกลาง", security.summary.platformAdminConfigured ? "พร้อม" : "ยังไม่พร้อม"],
+              ["เจ้าของร้าน", security.summary.tenantOwners],
+              ["สมาชิกในร้าน", security.summary.tenantMembers],
+              ["LINE OA", security.summary.connectedLineChannels],
+              ["โดเมนยืนยันแล้ว", security.summary.verifiedCustomDomains],
+              ["ร้านถูกระงับ", security.summary.suspendedTenants],
+            ].map(([label, value]) => (
+              <Card key={String(label)} elevation={0} className="rounded-3xl! bg-white">
+                <CardContent className="p-5!">
+                  <Typography className="text-sm text-slate-500">
+                    {label}
                   </Typography>
-                  <Typography className="mt-1 text-sm text-slate-500">
-                    {policy.detail}
+                  <Typography className="mt-2 text-2xl font-black text-slate-950">
+                    {value}
                   </Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+
+          <Card elevation={0} className="rounded-3xl! bg-white">
+            <CardContent className="p-0!">
+              {security.policies.map((policy, index) => (
+                <Box key={policy.title}>
+                  <Box className="grid gap-3 p-5 md:grid-cols-[1fr_auto] md:items-center">
+                    <Box>
+                      <Typography className="text-lg font-black text-slate-950">
+                        {policy.title}
+                      </Typography>
+                      <Typography className="mt-1 text-sm text-slate-500">
+                        {policy.detail}
+                      </Typography>
+                    </Box>
+                    <Chip
+                      color={statusColor(policy.status)}
+                      label={statusLabel(policy.status)}
+                    />
+                  </Box>
+                  {index < security.policies.length - 1 ? (
+                    <Divider className="border-slate-200!" />
+                  ) : null}
                 </Box>
-                <Chip label={policy.status} />
-              </Box>
-              {index < policies.length - 1 ? <Divider /> : null}
-            </Box>
-          ))}
-        </CardContent>
-      </Card>
+              ))}
+            </CardContent>
+          </Card>
+        </>
+      ) : null}
     </Stack>
   );
 }
