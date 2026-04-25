@@ -48,6 +48,11 @@ export const ADMIN_NAV: AdminNavItem[] = [
     group: "Settings",
   },
   {
+    label: "จัดหน้าเว็บรวม",
+    href: "/admin/store-builder",
+    group: "Settings",
+  },
+  {
     label: "ผู้ช่วยอัจฉริยะ",
     href: "/admin/ai",
     group: "Settings",

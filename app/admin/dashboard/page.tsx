@@ -29,6 +29,7 @@ function tenantStatusLabel(status: PlatformTenant["status"]) {
     active: "ใช้งานอยู่",
     pending: "รอตรวจสอบ",
     suspended: "ระงับชั่วคราว",
+    rejected: "ไม่อนุมัติ",
   };
   return map[status] || status;
 }

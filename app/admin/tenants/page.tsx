@@ -25,6 +25,7 @@ function tenantStatusLabel(status: PlatformTenant["status"]) {
     active: "ใช้งานอยู่",
     pending: "รอตรวจสอบ",
     suspended: "ระงับชั่วคราว",
+    rejected: "ไม่อนุมัติ",
   };
   return map[status] || status;
 }
@@ -44,6 +45,7 @@ export default function TenantsPage() {
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
   const [snackOpen, setSnackOpen] = React.useState(false);
+  const [reasons, setReasons] = React.useState<Record<string, string>>({});
 
   const loadTenants = React.useCallback(async () => {
     setLoading(true);
@@ -96,10 +98,13 @@ export default function TenantsPage() {
       const response = await tenantsService.updateTenantSettings(tenant.id, {
         status,
         bookingMode: tenant.bookingMode || "payment",
+        plan: tenant.plan,
+        reason: reasons[tenant.id] || tenant.lifecycleReason || "",
       });
       patchTenant(tenant.id, {
         status,
         bookingMode: tenant.bookingMode || "payment",
+        lifecycleReason: reasons[tenant.id] || tenant.lifecycleReason,
         ...response?.tenant,
       });
       setSnackOpen(true);
@@ -116,6 +121,8 @@ export default function TenantsPage() {
       const response = await tenantsService.updateTenantSettings(tenant.id, {
         status: tenant.status,
         bookingMode,
+        plan: tenant.plan,
+        reason: reasons[tenant.id] || tenant.lifecycleReason || "",
       });
       patchTenant(tenant.id, {
         status: tenant.status,
@@ -210,7 +217,20 @@ export default function TenantsPage() {
                       <MenuItem value="active">ใช้งานอยู่</MenuItem>
                       <MenuItem value="pending">รอตรวจสอบ</MenuItem>
                       <MenuItem value="suspended">ระงับชั่วคราว</MenuItem>
+                      <MenuItem value="rejected">ไม่อนุมัติ</MenuItem>
                     </TextField>
+                    <TextField
+                      size="small"
+                      label="เหตุผล"
+                      value={reasons[tenant.id] ?? tenant.lifecycleReason ?? ""}
+                      onChange={(event) =>
+                        setReasons((current) => ({
+                          ...current,
+                          [tenant.id]: event.target.value,
+                        }))
+                      }
+                      className="w-full sm:w-48"
+                    />
                     <TextField
                       select
                       size="small"

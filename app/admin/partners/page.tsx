@@ -46,6 +46,7 @@ const statusLabels: Record<PlatformTenantStatus, string> = {
   active: "ใช้งานอยู่",
   pending: "รอตรวจสอบ",
   suspended: "ระงับชั่วคราว",
+  rejected: "ไม่อนุมัติ",
 };
 
 function statusChipClass(status: PlatformTenantStatus) {

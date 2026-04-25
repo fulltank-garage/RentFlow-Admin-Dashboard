@@ -4,6 +4,7 @@ import * as React from "react";
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -36,6 +37,7 @@ export default function SecurityPage() {
   const [security, setSecurity] = React.useState<PlatformSecurity | null>(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
+  const [busyUserId, setBusyUserId] = React.useState("");
 
   const loadSecurity = React.useCallback(async () => {
     setLoading(true);
@@ -62,6 +64,26 @@ export default function SecurityPage() {
     events: ["tenant.updated", "support.changed"],
     onRefresh: loadSecurity,
   });
+
+  async function lockMember(userId?: string) {
+    if (!userId) {
+      setError("สมาชิกนี้ยังไม่ได้ผูกบัญชีผู้ใช้");
+      return;
+    }
+    setBusyUserId(userId);
+    try {
+      await securityService.updateUserSecurity(userId, {
+        status: "locked",
+        reason: "ล็อกโดยผู้ดูแลระบบกลาง",
+        revokeSession: true,
+      });
+      await loadSecurity();
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "ล็อกผู้ใช้ไม่สำเร็จ");
+    } finally {
+      setBusyUserId("");
+    }
+  }
 
   return (
     <Stack spacing={3}>
@@ -127,6 +149,44 @@ export default function SecurityPage() {
                   ) : null}
                 </Box>
               ))}
+            </CardContent>
+          </Card>
+
+          <Card elevation={0} className="rounded-3xl! bg-white">
+            <CardContent className="p-0!">
+              {(security.members || []).length === 0 ? (
+                <Box className="p-5">
+                  <Typography className="text-sm text-slate-500">
+                    ยังไม่มีสมาชิกในร้าน
+                  </Typography>
+                </Box>
+              ) : (
+                (security.members || []).slice(0, 12).map((member, index) => (
+                  <Box key={member.id}>
+                    <Box className="grid gap-3 p-5 md:grid-cols-[1fr_auto] md:items-center">
+                      <Box>
+                        <Typography className="text-lg font-black text-slate-950">
+                          {member.name || member.email}
+                        </Typography>
+                        <Typography className="mt-1 text-sm text-slate-500">
+                          {member.email} • สิทธิ์ {member.role}
+                        </Typography>
+                      </Box>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        disabled={!member.userId || busyUserId === member.userId}
+                        onClick={() => lockMember(member.userId)}
+                      >
+                        ล็อกและออกจากระบบ
+                      </Button>
+                    </Box>
+                    {index < (security.members || []).length - 1 ? (
+                      <Divider className="border-slate-200!" />
+                    ) : null}
+                  </Box>
+                ))
+              )}
             </CardContent>
           </Card>
         </>

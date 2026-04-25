@@ -188,6 +188,40 @@ export default function BillingPage() {
               </Stack>
             </CardContent>
           </Card>
+
+          <Card elevation={0} className="rounded-3xl! bg-white">
+            <CardContent className="p-5!">
+              <Typography className="text-lg font-black text-slate-950">
+                ใบแจ้งหนี้แพลตฟอร์ม
+              </Typography>
+              <Stack spacing={1.5} className="mt-4">
+                {(billing.invoices || []).length === 0 ? (
+                  <Typography className="text-sm text-slate-500">
+                    ยังไม่มีใบแจ้งหนี้
+                  </Typography>
+                ) : (
+                  (billing.invoices || []).slice(0, 8).map((invoice) => (
+                    <Box
+                      key={invoice.id}
+                      className="grid gap-3 rounded-2xl bg-slate-50 p-4 md:grid-cols-[1fr_auto] md:items-center"
+                    >
+                      <Box>
+                        <Typography className="font-black text-slate-950">
+                          รอบ {invoice.period} • {planLabel(invoice.plan)}
+                        </Typography>
+                        <Typography className="mt-1 text-sm text-slate-500">
+                          ร้าน {invoice.tenantId} • สถานะ {invoice.status}
+                        </Typography>
+                      </Box>
+                      <Typography className="font-black text-slate-950">
+                        {formatTHB(invoice.amount)}
+                      </Typography>
+                    </Box>
+                  ))
+                )}
+              </Stack>
+            </CardContent>
+          </Card>
         </>
       ) : null}
     </Stack>

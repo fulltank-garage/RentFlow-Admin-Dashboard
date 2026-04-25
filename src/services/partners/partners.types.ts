@@ -1,4 +1,4 @@
-export type PlatformTenantStatus = "active" | "pending" | "suspended";
+export type PlatformTenantStatus = "active" | "pending" | "suspended" | "rejected";
 export type PlatformTenantBookingMode = "payment" | "chat";
 
 export type PlatformTenant = {
@@ -11,6 +11,7 @@ export type PlatformTenant = {
   status: PlatformTenantStatus;
   bookingMode?: PlatformTenantBookingMode;
   plan: string;
+  lifecycleReason?: string;
   cars?: number;
   totalBookings?: number;
   bookingsThisMonth?: number;

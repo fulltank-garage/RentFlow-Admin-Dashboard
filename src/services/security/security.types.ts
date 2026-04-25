@@ -12,4 +12,13 @@ export type PlatformSecurity = {
     detail: string;
     status: string;
   }>;
+  members?: Array<{
+    id: string;
+    tenantId: string;
+    userId?: string;
+    email: string;
+    name?: string;
+    role: string;
+    status: string;
+  }>;
 };

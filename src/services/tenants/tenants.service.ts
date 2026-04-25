@@ -26,6 +26,8 @@ export const tenantsService = {
     input: {
       status: PlatformTenantStatus;
       bookingMode: PlatformTenantBookingMode;
+      plan?: string;
+      reason?: string;
     }
   ) {
     return requestAdmin<UpdateTenantSettingsResponse>(
