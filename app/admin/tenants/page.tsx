@@ -46,6 +46,7 @@ export default function TenantsPage() {
   const [error, setError] = React.useState("");
   const [snackOpen, setSnackOpen] = React.useState(false);
   const [reasons, setReasons] = React.useState<Record<string, string>>({});
+  const [chatThresholds, setChatThresholds] = React.useState<Record<string, string>>({});
 
   const loadTenants = React.useCallback(async () => {
     setLoading(true);
@@ -53,6 +54,14 @@ export default function TenantsPage() {
       setError("");
       const response = await tenantsService.listTenants();
       setTenants(response.items);
+      setChatThresholds(
+        Object.fromEntries(
+          response.items.map((tenant) => [
+            tenant.id,
+            String(Math.max(tenant.chatThresholdTHB ?? 0, 0)),
+          ])
+        )
+      );
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "โหลดข้อมูลร้านไม่สำเร็จ");
     } finally {
@@ -94,16 +103,23 @@ export default function TenantsPage() {
     tenant: PlatformTenant,
     status: PlatformTenant["status"]
   ) {
+    const chatThresholdTHB = Math.max(
+      Number(chatThresholds[tenant.id] || tenant.chatThresholdTHB || 0) || 0,
+      0
+    );
+
     try {
       const response = await tenantsService.updateTenantSettings(tenant.id, {
         status,
         bookingMode: tenant.bookingMode || "payment",
+        chatThresholdTHB,
         plan: tenant.plan,
         reason: reasons[tenant.id] || tenant.lifecycleReason || "",
       });
       patchTenant(tenant.id, {
         status,
         bookingMode: tenant.bookingMode || "payment",
+        chatThresholdTHB,
         lifecycleReason: reasons[tenant.id] || tenant.lifecycleReason,
         ...response?.tenant,
       });
@@ -117,18 +133,53 @@ export default function TenantsPage() {
     tenant: PlatformTenant,
     bookingMode: NonNullable<PlatformTenant["bookingMode"]>
   ) {
+    const chatThresholdTHB = Math.max(
+      Number(chatThresholds[tenant.id] || tenant.chatThresholdTHB || 0) || 0,
+      0
+    );
+
     try {
       const response = await tenantsService.updateTenantSettings(tenant.id, {
         status: tenant.status,
         bookingMode,
+        chatThresholdTHB,
         plan: tenant.plan,
         reason: reasons[tenant.id] || tenant.lifecycleReason || "",
       });
       patchTenant(tenant.id, {
         status: tenant.status,
         bookingMode,
+        chatThresholdTHB,
         ...response?.tenant,
       });
+      setSnackOpen(true);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "อัปเดตร้านไม่สำเร็จ");
+    }
+  }
+
+  async function updateChatThreshold(tenant: PlatformTenant) {
+    const chatThresholdTHB = Math.max(
+      Number(chatThresholds[tenant.id] || tenant.chatThresholdTHB || 0) || 0,
+      0
+    );
+
+    try {
+      const response = await tenantsService.updateTenantSettings(tenant.id, {
+        status: tenant.status,
+        bookingMode: tenant.bookingMode || "payment",
+        chatThresholdTHB,
+        plan: tenant.plan,
+        reason: reasons[tenant.id] || tenant.lifecycleReason || "",
+      });
+      patchTenant(tenant.id, {
+        chatThresholdTHB,
+        ...response?.tenant,
+      });
+      setChatThresholds((current) => ({
+        ...current,
+        [tenant.id]: String(chatThresholdTHB),
+      }));
       setSnackOpen(true);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "อัปเดตร้านไม่สำเร็จ");
@@ -198,6 +249,9 @@ export default function TenantsPage() {
                     <Typography className="mt-1 text-xs text-slate-500">
                       slug: {tenant.domainSlug}
                     </Typography>
+                    <Typography className="mt-1 text-xs text-slate-500">
+                      เกณฑ์แนะนำแชท: {(tenant.chatThresholdTHB ?? 0).toLocaleString("th-TH")} บาท
+                    </Typography>
                   </Box>
 
                   <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
@@ -247,6 +301,22 @@ export default function TenantsPage() {
                       <MenuItem value="payment">จองและชำระในระบบ</MenuItem>
                       <MenuItem value="chat">จองผ่านแชทก่อน</MenuItem>
                     </TextField>
+                    <TextField
+                      size="small"
+                      type="number"
+                      label="ยอดแนะนำแชท"
+                      value={chatThresholds[tenant.id] ?? String(tenant.chatThresholdTHB ?? 0)}
+                      onChange={(event) =>
+                        setChatThresholds((current) => ({
+                          ...current,
+                          [tenant.id]: event.target.value,
+                        }))
+                      }
+                      onBlur={() => updateChatThreshold(tenant)}
+                      className="w-full sm:w-44"
+                      inputProps={{ min: 0, step: 500 }}
+                      helperText="0 = ปิดการแนะนำ"
+                    />
                     <Button
                       href={`https://${tenant.publicDomain}`}
                       target="_blank"

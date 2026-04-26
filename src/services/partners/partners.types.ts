@@ -10,6 +10,7 @@ export type PlatformTenant = {
   publicDomain: string;
   status: PlatformTenantStatus;
   bookingMode?: PlatformTenantBookingMode;
+  chatThresholdTHB?: number;
   plan: string;
   lifecycleReason?: string;
   cars?: number;

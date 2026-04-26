@@ -26,6 +26,7 @@ export const tenantsService = {
     input: {
       status: PlatformTenantStatus;
       bookingMode: PlatformTenantBookingMode;
+      chatThresholdTHB?: number;
       plan?: string;
       reason?: string;
     }

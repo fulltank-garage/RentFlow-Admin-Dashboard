@@ -6,6 +6,8 @@ export type StorefrontBlock = {
   description?: string;
   buttonLabel?: string;
   href?: string;
+  tone?: "default" | "highlight" | "dark" | "success";
+  align?: "left" | "center";
 };
 
 export type StorefrontPage = {
@@ -13,4 +15,10 @@ export type StorefrontPage = {
   scope: "tenant" | "marketplace";
   page: string;
   blocks: StorefrontBlock[];
+  theme?: {
+    primaryColor?: string;
+    accentColor?: string;
+    surfaceColor?: string;
+  };
+  isPublished?: boolean;
 };
