@@ -97,7 +97,14 @@ export default function PartnersPage() {
   }, [loadPartners]);
 
   useAdminRealtimeRefresh({
-    events: ["tenant.updated", "booking.created", "payment.created"],
+    events: [
+      "tenant.updated",
+      "booking.created",
+      "booking.updated",
+      "payment.created",
+      "payment.updated",
+      "member.changed",
+    ],
     onRefresh: loadPartners,
   });
 

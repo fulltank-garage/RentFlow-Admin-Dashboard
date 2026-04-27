@@ -82,6 +82,7 @@ export default function TenantsPage() {
       "booking.created",
       "booking.updated",
       "booking.cancelled",
+      "car.status.changed",
       "payment.created",
       "payment.updated",
     ],

@@ -6,6 +6,7 @@ import type { AdminRealtimeEvent } from "./realtime.types";
 type SubscribeOptions = {
   onEvent: (event: AdminRealtimeEvent) => void;
   onError?: () => void;
+  onStatus?: (status: "connecting" | "open" | "closed" | "error") => void;
 };
 
 function adminRealtimeUrl() {
@@ -29,6 +30,7 @@ export function subscribeAdminRealtime(options: SubscribeOptions) {
 
   const connect = () => {
     if (closed) return;
+    options.onStatus?.("connecting");
     socket = new WebSocket(adminRealtimeUrl());
     socket.onmessage = (message) => {
       try {
@@ -39,11 +41,14 @@ export function subscribeAdminRealtime(options: SubscribeOptions) {
     };
     socket.onopen = () => {
       attempts = 0;
+      options.onStatus?.("open");
     };
     socket.onerror = () => {
+      options.onStatus?.("error");
       options.onError?.();
     };
     socket.onclose = () => {
+      options.onStatus?.("closed");
       if (closed) return;
       attempts += 1;
       reconnectTimer = window.setTimeout(
@@ -61,4 +66,3 @@ export function subscribeAdminRealtime(options: SubscribeOptions) {
     socket?.close();
   };
 }
-

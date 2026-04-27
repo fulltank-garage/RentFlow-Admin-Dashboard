@@ -89,7 +89,7 @@ export default function SecurityPage() {
   }, [loadSecurity]);
 
   useAdminRealtimeRefresh({
-    events: ["tenant.updated", "support.changed"],
+    events: ["tenant.updated", "support.changed", "member.changed"],
     onRefresh: loadSecurity,
   });
 

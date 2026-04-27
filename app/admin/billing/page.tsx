@@ -98,6 +98,7 @@ export default function BillingPage() {
       "booking.created",
       "booking.updated",
       "booking.cancelled",
+      "car.status.changed",
       "payment.created",
       "payment.updated",
     ],
