@@ -96,14 +96,17 @@ a {
 .admin-page,
 .partner-page {
   display: grid;
-  gap: clamp(1rem, 1.6vw, 1.5rem);
+  gap: clamp(1.15rem, 1.55vw, 1.75rem);
   width: 100%;
 }
 
 .admin-page-header,
 .partner-page-header {
   display: grid;
-  gap: 0.7rem;
+  width: 100%;
+  min-width: 0;
+  gap: clamp(0.65rem, 0.8vw, 0.9rem);
+  margin-bottom: clamp(0.2rem, 0.5vw, 0.45rem);
 }
 
 .admin-page-kicker,
@@ -125,9 +128,10 @@ a {
 
 .admin-page-title,
 .partner-page-title {
-  font-size: clamp(1.8rem, 1.2rem + 1.75vw, 3.25rem) !important;
+  max-width: 74rem;
+  font-size: clamp(1.9rem, 1.25rem + 1.65vw, 3.4rem) !important;
   font-weight: 800 !important;
-  line-height: 1.02 !important;
+  line-height: 1.05 !important;
   letter-spacing: -0.05em !important;
   color: var(--rf-admin-ink) !important;
 }
@@ -139,7 +143,7 @@ a {
 
 .admin-page-subtitle,
 .partner-page-subtitle {
-  max-width: 62rem;
+  max-width: 68rem;
   font-size: clamp(0.96rem, 0.9rem + 0.18vw, 1.08rem) !important;
   line-height: 1.8 !important;
   color: var(--rf-admin-muted) !important;
@@ -451,14 +455,49 @@ a {
 }
 
 @media (max-width: 640px) {
+  .admin-content-container,
+  .partner-content-container {
+    padding-inline: 1rem !important;
+  }
+
   .admin-card,
   .partner-card,
   .MuiCard-root {
     border-radius: 26px !important;
   }
 
+  .admin-page,
+  .partner-page {
+    gap: 1rem;
+  }
+
+  .admin-page-header,
+  .partner-page-header {
+    gap: 0.55rem;
+    margin-bottom: 0;
+  }
+
+  .admin-page-header-with-action,
+  .partner-page-header-with-action {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .admin-page-title,
   .partner-page-title {
+    font-size: clamp(1.65rem, 1.25rem + 2.8vw, 2.15rem) !important;
+    line-height: 1.1 !important;
     letter-spacing: -0.035em !important;
+  }
+
+  .admin-login-title {
+    font-size: clamp(1.7rem, 1.05rem + 4.7vw, 2.45rem) !important;
+    line-height: 1.08 !important;
+  }
+
+  .admin-page-subtitle,
+  .partner-page-subtitle,
+  .admin-section-subtitle,
+  .partner-section-subtitle {
+    line-height: 1.65 !important;
   }
 }
