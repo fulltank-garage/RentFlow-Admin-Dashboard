@@ -103,8 +103,8 @@ export default function Login() {
           <CardContent className="flex w-full flex-col gap-6 p-6! md:p-8!">
             <Box className="admin-page-header">
               <Typography className="admin-page-title admin-login-title">
-                ควบคุมระบบ ร้าน และ
-                <span className="whitespace-nowrap">การจองในที่เดียว</span>
+                ควบคุมระบบ ร้าน{" "}
+                <span className="whitespace-nowrap">และการจองในที่เดียว</span>
               </Typography>
               <Typography className="admin-page-subtitle">
                 หลังบ้านกลางสำหรับดูแลร้าน เจ้าของร้าน โดเมน และการชำระเงิน
