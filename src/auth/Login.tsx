@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Alert,
@@ -15,20 +16,42 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import AdminPanelSettingsRoundedIcon from "@mui/icons-material/AdminPanelSettingsRounded";
-import LockRoundedIcon from "@mui/icons-material/LockRounded";
-import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
 
 import { authService } from "@/src/services/auth/auth.service";
 import { deleteClientCookie } from "@/src/lib/client-cookie";
+
+const loginFieldSX = {
+  "& .MuiOutlinedInput-root": {
+    minHeight: "3.35rem",
+    alignItems: "center",
+  },
+  "& .MuiOutlinedInput-input": {
+    height: "auto",
+    paddingTop: "0.95rem !important",
+    paddingBottom: "0.95rem !important",
+    lineHeight: "1.35",
+  },
+  "& .MuiInputLabel-root:not(.MuiInputLabel-shrink)": {
+    transform: "translate(18px, 15px) scale(1)",
+  },
+  "& input:-webkit-autofill": {
+    WebkitBoxShadow: "0 0 0 100px white inset",
+    WebkitTextFillColor: "inherit",
+    caretColor: "inherit",
+    transition: "background-color 9999s ease-out 0s",
+  },
+};
 
 export default function Login() {
   const router = useRouter();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [showPw, setShowPw] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
+  const usernameOk = username.length === 0 ? true : username.trim().length >= 3;
+  const pwOk = password.length === 0 ? true : password.length >= 6;
   const canSubmit = username.trim().length >= 3 && password.length >= 6 && !loading;
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -65,101 +88,127 @@ export default function Login() {
   }
 
   return (
-    <Box className="min-h-screen bg-[radial-gradient(circle_at_top_left,#dbeafe,transparent_32%),linear-gradient(135deg,#f8fafc,#ffffff_45%,#ecfeff)] px-4 py-10">
-      <Box className="mx-auto grid min-h-[calc(100vh-80px)] w-full max-w-6xl items-center gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-        <Box>
-          <Box className="inline-flex items-center gap-3 rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 shadow-sm backdrop-blur">
-            <Box className="grid h-11 w-11 place-items-center rounded-xl bg-slate-900 text-white">
-              <AdminPanelSettingsRoundedIcon />
-            </Box>
-            <Box>
-              <Typography className="text-sm font-black text-slate-950">
-                RentFlow Platform Admin
+    <Box
+      className="relative grid min-h-screen place-items-center overflow-hidden bg-[var(--rf-admin-bg)] px-4 py-8 md:px-6"
+      sx={{
+        backgroundImage:
+          "linear-gradient(90deg, rgba(255,255,255,0.94) 0%, rgba(255,255,255,0.86) 46%, rgba(255,255,255,0.62) 100%), url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=2200&q=85')",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",
+      }}
+    >
+      <Box className="relative z-10 mx-auto grid w-full max-w-5xl items-center justify-center gap-5 lg:grid-cols-2">
+        <Card elevation={0} className="admin-card order-2 flex w-full rounded-[34px]! bg-white/82! lg:order-1 lg:aspect-square">
+          <CardContent className="flex w-full flex-col gap-6 p-6! md:p-8!">
+            <Box className="admin-page-header">
+              <Typography className="admin-page-title admin-login-title">
+                ควบคุมระบบ ร้าน และ
+                <span className="whitespace-nowrap">การจองในที่เดียว</span>
               </Typography>
-              <Typography className="text-xs text-slate-500">
-                admin.rentflow.com
+              <Typography className="admin-page-subtitle">
+                หลังบ้านกลางสำหรับดูแลร้าน เจ้าของร้าน โดเมน และการชำระเงิน
               </Typography>
             </Box>
-          </Box>
 
-          <Typography className="mt-8 max-w-3xl text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
-            ศูนย์ควบคุมระบบหลายร้านสำหรับ RentFlow
-          </Typography>
-          <Typography className="mt-5 max-w-2xl text-base leading-8 text-slate-600">
-            ดูแลเจ้าของร้านทั้งหมดจากหลังบ้านรวม ตรวจสอบร้านใหม่ จัดการ subdomain
-            และควบคุมเส้นทางของเว็บเช่ารถแต่ละร้านในที่เดียว
-          </Typography>
+            <Divider className="border-white/70!" />
 
-          <Box className="mt-8 grid gap-3 sm:grid-cols-3">
-            {["partner.rentflow.com", "admin.rentflow.com", "*.rentflow.com"].map(
-              (host) => (
+            <Stack spacing={1.35}>
+              {[
+                "จัดการร้านและโดเมน",
+                "ดูแลการจองและการชำระเงิน",
+                "ควบคุมระบบรวมทุกขนาดหน้าจอ",
+              ].map((item) => (
                 <Box
-                  key={host}
-                  className="rounded-2xl border border-slate-200 bg-white/75 p-4 backdrop-blur"
+                  key={item}
+                  className="rounded-[22px] border border-white/60 bg-white/46 p-4 backdrop-blur-[2px] md:p-4"
                 >
-                  <Typography className="text-xs text-slate-500">Host</Typography>
-                  <Typography className="mt-1 text-sm font-bold text-slate-900">
-                    {host}
+                  <Typography className="text-sm font-medium leading-7 text-slate-600">
+                    {item}
                   </Typography>
                 </Box>
-              )
-            )}
-          </Box>
-        </Box>
+              ))}
+            </Stack>
+          </CardContent>
+        </Card>
 
         <Card
           elevation={0}
-          className="rounded-[28px]! border border-slate-200 bg-white/90 shadow-xl shadow-slate-200/60 backdrop-blur"
+          className="admin-card order-1 flex w-full overflow-hidden rounded-[34px]! border-slate-200! bg-white! shadow-[0_28px_80px_rgba(15,23,42,0.16)]! lg:order-2 lg:aspect-square"
         >
-          <CardContent className="p-6! md:p-8!">
-            <Stack spacing={1} className="text-center">
-              <Typography className="text-2xl font-black text-slate-950">
+          <CardContent className="grid w-full content-start gap-4 p-6! pb-7! md:p-8! md:pb-9!">
+            <Box className="mx-auto grid h-14 w-14 place-items-center md:h-16 md:w-16">
+              <Image
+                src="/RentFlow.svg"
+                alt="RentFlow"
+                width={64}
+                height={64}
+                priority
+                className="h-14 w-14 object-contain md:h-16 md:w-16"
+              />
+            </Box>
+
+            <Stack spacing={1} className="items-center text-center">
+              <Typography className="admin-section-title">
                 เข้าสู่ระบบผู้ดูแล
               </Typography>
-              <Typography className="text-sm text-slate-500">
-                ใช้บัญชี platform admin เพื่อจัดการระบบรวม
+              <Typography className="admin-section-subtitle">
+                ใช้บัญชีผู้ดูแลเพื่อเข้าสู่ระบบกลาง
               </Typography>
             </Stack>
 
-            <Divider className="my-6! border-slate-200!" />
+            <Divider className="border-white/70!" />
 
-            {error ? (
-              <Alert
-                severity="error"
-                onClose={() => setError(null)}
-                className="mb-4 rounded-2xl!"
-              >
-                {error}
-              </Alert>
-            ) : null}
+            <Box className="min-h-[54px]">
+              {error ? (
+                <Alert
+                  severity="error"
+                  className="rounded-[22px]! py-1!"
+                  onClose={() => setError(null)}
+                >
+                  {error}
+                </Alert>
+              ) : null}
+            </Box>
 
             <Box component="form" onSubmit={handleSubmit} className="grid gap-4">
               <TextField
-                label="ชื่อผู้ใช้หรืออีเมลผู้ดูแล"
+                label="ชื่อผู้ใช้"
                 value={username}
                 onChange={(event) => setUsername(event.target.value)}
                 autoComplete="username"
                 fullWidth
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <PersonRoundedIcon fontSize="small" />
-                    </InputAdornment>
-                  ),
-                }}
+                sx={loginFieldSX}
+                error={!usernameOk}
+                helperText={!usernameOk ? "ชื่อผู้ใช้อย่างน้อย 3 ตัวอักษร" : undefined}
               />
 
               <TextField
                 label="รหัสผ่าน"
-                type="password"
+                type={showPw ? "text" : "password"}
                 value={password}
                 onChange={(event) => setPassword(event.target.value)}
                 autoComplete="current-password"
                 fullWidth
+                sx={loginFieldSX}
+                error={!pwOk}
+                helperText={!pwOk ? "อย่างน้อย 6 ตัวอักษร" : undefined}
                 InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <LockRoundedIcon fontSize="small" />
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Button
+                        onClick={() => setShowPw((value) => !value)}
+                        className="min-h-0! px-0! py-0! text-sm! font-semibold! text-slate-500!"
+                        sx={{
+                          minWidth: 0,
+                          backgroundColor: "transparent !important",
+                          "&:hover": {
+                            backgroundColor: "transparent !important",
+                          },
+                        }}
+                      >
+                        {showPw ? "ซ่อน" : "แสดง"}
+                      </Button>
                     </InputAdornment>
                   ),
                 }}
@@ -169,11 +218,10 @@ export default function Login() {
                 type="submit"
                 variant="contained"
                 disabled={!canSubmit}
-                className="rounded-2xl! py-3! font-bold!"
-                sx={{ bgcolor: "rgb(15 23 42)" }}
+                className="rounded-full! font-semibold!"
               >
                 {loading ? (
-                  <Stack direction="row" spacing={1} alignItems="center">
+                  <Stack direction="row" className="items-center gap-2">
                     <CircularProgress size={18} color="inherit" />
                     <span>กำลังเข้าสู่ระบบ...</span>
                   </Stack>

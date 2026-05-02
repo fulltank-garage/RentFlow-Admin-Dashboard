@@ -132,6 +132,11 @@ a {
   color: var(--rf-admin-ink) !important;
 }
 
+.admin-login-title {
+  font-size: clamp(2rem, 1.1rem + 2.5vw, 3.45rem) !important;
+  line-height: 1.04 !important;
+}
+
 .admin-page-subtitle,
 .partner-page-subtitle {
   max-width: 62rem;
@@ -433,6 +438,11 @@ a {
   .admin-page-title,
   .partner-page-title {
     letter-spacing: -0.04em !important;
+  }
+
+  .admin-login-title {
+    font-size: clamp(1.7rem, 1.05rem + 4.7vw, 2.45rem) !important;
+    line-height: 1.08 !important;
   }
 
   .MuiButton-root {
