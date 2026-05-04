@@ -9,7 +9,6 @@ import {
   Chip,
   CircularProgress,
   Divider,
-  Stack,
   Typography,
 } from "@mui/material";
 import { useAdminRealtimeRefresh } from "@/src/hooks/realtime/useAdminRealtimeRefresh";
@@ -76,12 +75,12 @@ export default function DomainsPage() {
   });
 
   return (
-    <Stack spacing={3}>
-      <Box>
-        <Typography className="text-3xl font-black tracking-tight text-slate-950">
+    <Box className="admin-page">
+      <Box className="admin-page-header">
+        <Typography className="admin-page-title">
           โดเมนและ Subdomain ของร้าน
         </Typography>
-        <Typography className="mt-2 text-sm text-slate-500">
+        <Typography className="admin-page-subtitle">
           ตรวจ route สำหรับหน้าร้านสาธารณะของแต่ละร้านจากข้อมูลจริง
         </Typography>
       </Box>
@@ -173,6 +172,6 @@ export default function DomainsPage() {
           </Card>
         </>
       )}
-    </Stack>
+    </Box>
   );
 }

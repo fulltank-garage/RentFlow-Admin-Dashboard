@@ -188,12 +188,10 @@ export default function TenantsPage() {
   }
 
   return (
-    <Stack spacing={3}>
-      <Box>
-        <Typography className="text-3xl font-black tracking-tight text-slate-950">
-          ร้านเช่ารถทั้งหมด
-        </Typography>
-        <Typography className="mt-2 text-sm text-slate-500">
+    <Box className="admin-page">
+      <Box className="admin-page-header">
+        <Typography className="admin-page-title">ร้านเช่ารถทั้งหมด</Typography>
+        <Typography className="admin-page-subtitle">
           จัดการ tenant กลางจาก API จริง ระงับหรือเปิดร้านได้ทันที
         </Typography>
       </Box>
@@ -346,6 +344,6 @@ export default function TenantsPage() {
           อัปเดตสถานะร้านสำเร็จ
         </Alert>
       </Snackbar>
-    </Stack>
+    </Box>
   );
 }

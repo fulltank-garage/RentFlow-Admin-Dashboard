@@ -113,20 +113,20 @@ export default function StoreBuilderPage() {
   }
 
   return (
-    <Stack spacing={3}>
-      <Stack direction={{ xs: "column", md: "row" }} spacing={2} className="items-start justify-between">
+    <Box className="admin-page">
+      <Box className="admin-page-header admin-page-header-with-action">
         <Box>
-          <Typography className="text-3xl font-black tracking-tight text-slate-950">
-            จัดหน้าเว็บรวม
-          </Typography>
-          <Typography className="mt-2 text-sm text-slate-500">
+          <Typography className="admin-page-title">จัดหน้าเว็บรวม</Typography>
+          <Typography className="admin-page-subtitle">
             จัด section หน้า rentflow.com แบบศูนย์กลาง ทั้งข้อความ โปรโมชัน ปุ่ม และโทนสีของ marketplace
           </Typography>
         </Box>
-        <Button variant="contained" onClick={save} disabled={saving}>
-          {saving ? "กำลังบันทึก" : "บันทึก"}
-        </Button>
-      </Stack>
+        <Box className="admin-header-action">
+          <Button variant="contained" onClick={save} disabled={saving}>
+            {saving ? "กำลังบันทึก" : "บันทึก"}
+          </Button>
+        </Box>
+      </Box>
 
       <Card elevation={0} className="rounded-3xl! bg-white">
         <CardContent className="grid gap-5">
@@ -370,6 +370,6 @@ export default function StoreBuilderPage() {
       >
         <Alert severity={message.includes("ไม่สำเร็จ") ? "error" : "success"}>{message}</Alert>
       </Snackbar>
-    </Stack>
+    </Box>
   );
 }

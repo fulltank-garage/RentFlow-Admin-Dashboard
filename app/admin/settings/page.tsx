@@ -106,12 +106,10 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <Stack spacing={3}>
-      <Box>
-        <Typography className="text-3xl font-black tracking-tight text-slate-950">
-          ตั้งค่าหน้ารวม
-        </Typography>
-        <Typography className="mt-2 text-sm text-slate-500">
+    <Box className="admin-page">
+      <Box className="admin-page-header">
+        <Typography className="admin-page-title">ตั้งค่าหน้ารวม</Typography>
+        <Typography className="admin-page-subtitle">
           จัดการรูปโปรโมชันที่แสดงบนหน้า rentflow.com สำหรับลูกค้าทุกร้าน
         </Typography>
       </Box>
@@ -195,6 +193,6 @@ export default function AdminSettingsPage() {
           {message}
         </Alert>
       </Snackbar>
-    </Stack>
+    </Box>
   );
 }

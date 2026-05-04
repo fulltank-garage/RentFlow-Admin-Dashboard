@@ -156,12 +156,12 @@ export default function SecurityPage() {
   }
 
   return (
-    <Stack spacing={3}>
-      <Box>
-        <Typography className="text-3xl font-black tracking-tight text-slate-950">
+    <Box className="admin-page">
+      <Box className="admin-page-header">
+        <Typography className="admin-page-title">
           ความปลอดภัยและสิทธิ์การเข้าถึง
         </Typography>
-        <Typography className="mt-2 text-sm text-slate-500">
+        <Typography className="admin-page-subtitle">
           แยกสิทธิ์ระหว่างผู้ดูแลระบบ เจ้าของร้าน และลูกค้าหน้าร้าน
         </Typography>
       </Box>
@@ -364,6 +364,6 @@ export default function SecurityPage() {
           </Card>
         </>
       ) : null}
-    </Stack>
+    </Box>
   );
 }

@@ -53,7 +53,7 @@ export const ADMIN_NAV: AdminNavItem[] = [
     group: "Settings",
   },
   {
-    label: "ผู้ช่วยอัจฉริยะ",
+    label: "ผู้ช่วย AI",
     href: "/admin/ai",
     group: "Settings",
   },

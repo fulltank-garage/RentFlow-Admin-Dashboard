@@ -49,13 +49,21 @@ export default function AdminSidebar({
       className="admin-shell h-full border-0"
       sx={{ display: "flex", flexDirection: "column" }}
     >
-      <Box className="p-4 md:p-5" sx={{ flex: "0 0 auto" }}>
-        <Stack direction="row" spacing={1.5} alignItems="center">
-          <Box className="grid h-11 w-11 place-items-center overflow-hidden rounded-[18px] bg-[var(--rf-admin-blue-deep)] text-sm font-black tracking-[-0.05em] text-white shadow-[0_18px_38px_rgba(15,23,42,0.2)]">
+      <Box
+        sx={{
+          flex: "0 0 auto",
+          minHeight: 72,
+          display: "flex",
+          alignItems: "center",
+          px: { xs: 2, md: 3 },
+        }}
+      >
+        <Stack direction="row" spacing={1.5} alignItems="center" className="min-w-0">
+          <Box className="grid h-[42px] w-[42px] shrink-0 place-items-center overflow-hidden rounded-[18px] bg-[var(--rf-admin-blue-deep)] text-sm font-black tracking-[-0.05em] text-white shadow-[0_10px_28px_rgba(15,23,42,0.14)]">
             RF
           </Box>
-          <Box>
-            <Typography className="text-base font-extrabold tracking-[-0.03em] text-slate-950">
+          <Box className="min-w-0">
+            <Typography className="truncate text-[1.02rem] font-extrabold tracking-[-0.03em] text-slate-950">
               ศูนย์จัดการระบบ
             </Typography>
           </Box>
@@ -70,6 +78,8 @@ export default function AdminSidebar({
           flex: "1 1 auto",
           minHeight: 0,
           overflowY: "auto",
+          overscrollBehaviorY: "contain",
+          WebkitOverflowScrolling: "touch",
         }}
       >
         {GROUPS.map((group, index) => {
@@ -158,9 +168,12 @@ export default function AdminSidebar({
 
   const paperSx = {
     width: drawerWidth,
+    height: "100dvh",
     borderRight: 0,
     bgcolor: "#ffffff",
     boxShadow: "none",
+    overflow: "hidden",
+    overscrollBehavior: "contain",
   } as const;
 
   return (

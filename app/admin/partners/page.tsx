@@ -140,7 +140,6 @@ export default function PartnersPage() {
   return (
     <Box className="admin-page">
       <Box className="admin-page-header">
-        <Typography className="admin-page-kicker">จัดการ Partner</Typography>
         <Typography className="admin-page-title">เจ้าของร้าน</Typography>
         <Typography className="admin-page-subtitle">
           เพิ่มบัญชีเจ้าของร้าน สร้างหน้าร้าน และกำหนด subdomain ให้พร้อมใช้งานจากระบบกลาง

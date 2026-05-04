@@ -90,40 +90,23 @@ export default function AdminAiPage() {
   }
 
   return (
-    <Stack spacing={3}>
-      <Box className="rounded-[32px] border border-slate-200 bg-white p-6 md:p-8">
-        <Stack
-          direction={{ xs: "column", lg: "row" }}
-          spacing={3}
-          justifyContent="space-between"
-        >
-          <Box className="max-w-3xl">
-            <Chip
-              icon={<AutoAwesomeRoundedIcon />}
-              label={assistant?.provider || "database-rules"}
-              className="border border-violet-200! bg-violet-50! text-violet-900!"
-            />
-            <Typography className="mt-4 text-3xl font-black tracking-tight text-slate-950 md:text-5xl">
-              Platform AI Insights
-            </Typography>
-            <Typography className="mt-4 text-sm leading-7 text-slate-600 md:text-base">
-              หน้านี้สรุปสัญญาณที่ควรจับตาทั้งระบบจาก tenant, domain และรายได้จริง
-              เพื่อช่วยให้ทีม platform ตัดสินใจได้เร็วขึ้น
-            </Typography>
-          </Box>
+    <Box className="admin-page">
+      <Box className="admin-page-header">
+        <Typography className="admin-page-title">ผู้ช่วย AI</Typography>
+        <Typography className="admin-page-subtitle">
+          สรุปสัญญาณที่ควรจับตาทั้งระบบจาก tenant, domain และรายได้จริง
+          เพื่อช่วยให้ทีม platform ตัดสินใจได้เร็วขึ้น
+        </Typography>
+      </Box>
 
-          <Box className="min-w-72 rounded-3xl bg-slate-950 p-5 text-white">
-            <Typography className="text-xs uppercase tracking-[0.22em] text-slate-400">
-              Generated at
-            </Typography>
-            <Typography className="mt-3 text-lg font-black">
-              {formatDate(assistant?.generatedAt)}
-            </Typography>
-            <Typography className="mt-3 text-sm leading-6 text-slate-300">
-              สรุปนี้อิงข้อมูลจริงจาก tenant, domain และยอดรายได้ในระบบ RentFlow
-            </Typography>
-          </Box>
-        </Stack>
+      <Box className="admin-card rounded-[32px]! p-5 md:p-6">
+        <Typography className="admin-section-title">
+          สถานะการวิเคราะห์
+        </Typography>
+        <Typography className="admin-section-subtitle mt-2">
+          อัปเดตล่าสุด {formatDate(assistant?.generatedAt)} • แหล่งข้อมูล{" "}
+          {assistant?.provider || "database-rules"}
+        </Typography>
       </Box>
 
       {error ? <Alert severity="error">{error}</Alert> : null}
@@ -276,6 +259,6 @@ export default function AdminAiPage() {
           </Box>
         </>
       ) : null}
-    </Stack>
+    </Box>
   );
 }

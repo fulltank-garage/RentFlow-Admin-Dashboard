@@ -106,12 +106,10 @@ export default function BillingPage() {
   });
 
   return (
-    <Stack spacing={3}>
-      <Box>
-        <Typography className="text-3xl font-black tracking-tight text-slate-950">
-          แผนและรายได้
-        </Typography>
-        <Typography className="mt-2 text-sm text-slate-500">
+    <Box className="admin-page">
+      <Box className="admin-page-header">
+        <Typography className="admin-page-title">แผนและรายได้</Typography>
+        <Typography className="admin-page-subtitle">
           ภาพรวมรายได้และจำนวนร้านตามแผนบริการจากข้อมูลจริง
         </Typography>
       </Box>
@@ -297,6 +295,6 @@ export default function BillingPage() {
           </Card>
         </>
       ) : null}
-    </Stack>
+    </Box>
   );
 }

@@ -120,43 +120,42 @@ export default function AdminDashboardPage() {
     : [];
 
   return (
-    <Stack spacing={3}>
-      <Box className="rounded-[32px] bg-white p-6 md:p-8">
-        <Stack
-          direction={{ xs: "column", md: "row" }}
-          spacing={3}
-          justifyContent="space-between"
-        >
-          <Box>
-            <Typography className="text-sm uppercase tracking-[0.28em] text-slate-400">
-              ภาพรวมระบบ
-            </Typography>
-            <Typography className="mt-3 text-3xl font-black tracking-tight text-slate-950 md:text-5xl">
-              ควบคุม RentFlow ทุก tenant ในที่เดียว
-            </Typography>
-            <Typography className="mt-4 max-w-3xl text-sm leading-7 text-slate-600 md:text-base">
-              จัดการเจ้าของร้าน ตรวจสอบร้านใหม่ และดูสถานะ subdomain
-              ของแต่ละร้านจากข้อมูลจริงในระบบ
-            </Typography>
-          </Box>
+    <Box className="admin-page">
+      <Box className="admin-page-header">
+        <Typography className="admin-page-title">ภาพรวมระบบ</Typography>
+        <Typography className="admin-page-subtitle">
+          ควบคุม RentFlow ทุก tenant ในที่เดียว ตรวจสอบร้านใหม่ โดเมน รายได้
+          และสถานะการใช้งานของแต่ละร้านจากข้อมูลล่าสุด
+        </Typography>
+      </Box>
 
-          <Box className="min-w-72 rounded-3xl bg-slate-950 p-5 text-white">
-            <Typography className="text-xs uppercase tracking-[0.22em] text-slate-400">
-              Host model
-            </Typography>
-            <Stack spacing={1.25} className="mt-4">
-              <Typography className="text-sm font-semibold">
-                Admin: {overview?.hosts.admin || "-"}
+      <Box className="admin-card rounded-[32px]! p-5 md:p-6">
+        <Typography className="admin-section-title">
+          โครงสร้าง URL ของระบบ
+        </Typography>
+        <Typography className="admin-section-subtitle mt-2">
+          ใช้ตรวจสอบ URL หลักของหลังบ้าน แดชบอร์ดเจ้าของร้าน และหน้าร้านสาธารณะ
+        </Typography>
+
+        <Box className="mt-5 grid gap-3 md:grid-cols-3">
+          {[
+            ["Admin", overview?.hosts.admin || "-"],
+            ["Partner", overview?.hosts.partner || "-"],
+            ["หน้าร้าน", overview?.hosts.wildcardStorefront || "-"],
+          ].map(([label, value]) => (
+            <Box
+              key={label}
+              className="rounded-[24px] bg-slate-50 px-4 py-4"
+            >
+              <Typography className="text-sm font-semibold text-slate-500">
+                {label}
               </Typography>
-              <Typography className="text-sm font-semibold">
-                Partner: {overview?.hosts.partner || "-"}
+              <Typography className="mt-2 break-all text-[1rem] font-bold tracking-[-0.03em] text-slate-950">
+                {value}
               </Typography>
-              <Typography className="text-sm font-semibold">
-                Shops: {overview?.hosts.wildcardStorefront || "-"}
-              </Typography>
-            </Stack>
-          </Box>
-        </Stack>
+            </Box>
+          ))}
+        </Box>
       </Box>
 
       {error ? <Alert severity="error">{error}</Alert> : null}
@@ -309,6 +308,6 @@ export default function AdminDashboardPage() {
           </Box>
         </>
       ) : null}
-    </Stack>
+    </Box>
   );
 }
