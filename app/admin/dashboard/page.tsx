@@ -129,46 +129,17 @@ export default function AdminDashboardPage() {
         </Typography>
       </Box>
 
-      <Box className="admin-card rounded-[32px]! p-5 md:p-6">
-        <Typography className="admin-section-title">
-          โครงสร้าง URL ของระบบ
-        </Typography>
-        <Typography className="admin-section-subtitle mt-2">
-          ใช้ตรวจสอบ URL หลักของหลังบ้าน แดชบอร์ดเจ้าของร้าน และหน้าร้านสาธารณะ
-        </Typography>
-
-        <Box className="mt-5 grid gap-3 md:grid-cols-3">
-          {[
-            ["Admin", overview?.hosts.admin || "-"],
-            ["Partner", overview?.hosts.partner || "-"],
-            ["หน้าร้าน", overview?.hosts.wildcardStorefront || "-"],
-          ].map(([label, value]) => (
-            <Box
-              key={label}
-              className="rounded-[24px] bg-slate-50 px-4 py-4"
-            >
-              <Typography className="text-sm font-semibold text-slate-500">
-                {label}
-              </Typography>
-              <Typography className="mt-2 break-all text-[1rem] font-bold tracking-[-0.03em] text-slate-950">
-                {value}
-              </Typography>
-            </Box>
-          ))}
-        </Box>
-      </Box>
-
       {error ? <Alert severity="error">{error}</Alert> : null}
 
       {loading ? (
-        <Box className="grid min-h-72 place-items-center rounded-[32px] bg-white">
+        <Box className="admin-card grid min-h-72 place-items-center rounded-[32px]">
           <CircularProgress />
         </Box>
       ) : overview ? (
         <>
           <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {stats.map((stat) => (
-              <Card key={stat.label} elevation={0} className="rounded-3xl! bg-white">
+              <Card key={stat.label} elevation={0} className="admin-card rounded-3xl!">
                 <CardContent className="p-5!">
                   <Typography className="text-sm text-slate-500">
                     {stat.label}
@@ -185,7 +156,7 @@ export default function AdminDashboardPage() {
           </Box>
 
           <Box className="grid gap-4 xl:grid-cols-[1.2fr_0.8fr]">
-            <Card elevation={0} className="rounded-3xl! bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Typography className="text-lg font-black text-slate-950">
                   ร้านล่าสุดในระบบ
@@ -205,7 +176,7 @@ export default function AdminDashboardPage() {
                     overview.recentTenants.map((tenant) => (
                       <Box
                         key={tenant.id}
-                        className="grid gap-3 rounded-2xl bg-slate-50 p-4 md:grid-cols-[1fr_auto]"
+                        className="grid gap-3 rounded-2xl border border-[var(--rf-admin-line)] bg-slate-50 p-4 md:grid-cols-[1fr_auto]"
                       >
                         <Box>
                           <Stack direction="row" spacing={1} alignItems="center">
@@ -238,7 +209,7 @@ export default function AdminDashboardPage() {
               </CardContent>
             </Card>
 
-            <Card elevation={0} className="rounded-3xl! bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Typography className="text-lg font-black text-slate-950">
                   ความพร้อมของระบบร้าน
@@ -289,7 +260,7 @@ export default function AdminDashboardPage() {
                         direction="row"
                         justifyContent="space-between"
                         spacing={2}
-                        className="rounded-2xl bg-slate-50 px-3 py-2"
+                        className="rounded-2xl border border-[var(--rf-admin-line)] bg-slate-50 px-3 py-2"
                       >
                         <Typography className="text-sm font-semibold text-slate-900">
                           {domain.domain}

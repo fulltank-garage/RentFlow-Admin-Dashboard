@@ -113,7 +113,7 @@ export default function AdminAiPage() {
 
       {assistant ? (
         <>
-          <Card elevation={0} className="rounded-3xl! border border-slate-200 bg-white">
+          <Card elevation={0} className="admin-card rounded-3xl!">
             <CardContent className="p-6!">
               <Stack direction="row" spacing={2} className="items-start">
                 <Box className="grid h-12 w-12 place-items-center rounded-2xl bg-violet-100 text-violet-700">
@@ -131,7 +131,7 @@ export default function AdminAiPage() {
 
           <Box className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {assistant.metrics.map((metric) => (
-              <Card key={metric.label} elevation={0} className="rounded-3xl! border border-slate-200 bg-white">
+              <Card key={metric.label} elevation={0} className="admin-card rounded-3xl!">
                 <CardContent className="p-5!">
                   <Typography className="text-sm text-slate-500">{metric.label}</Typography>
                   <Typography className="mt-2 text-3xl font-black text-slate-950">
@@ -155,7 +155,7 @@ export default function AdminAiPage() {
           </Box>
 
           <Box className="grid gap-4 xl:grid-cols-[1fr_1fr]">
-            <Card elevation={0} className="rounded-3xl! border border-slate-200 bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Stack direction="row" spacing={2} className="items-center">
                   <Box className="grid h-11 w-11 place-items-center rounded-2xl bg-amber-100 text-amber-700">
@@ -177,7 +177,7 @@ export default function AdminAiPage() {
               </CardContent>
             </Card>
 
-            <Card elevation={0} className="rounded-3xl! border border-slate-200 bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Stack direction="row" spacing={2} className="items-center">
                   <Box className="grid h-11 w-11 place-items-center rounded-2xl bg-sky-100 text-sky-700">
@@ -190,7 +190,7 @@ export default function AdminAiPage() {
                 </Stack>
                 <Stack spacing={2} className="mt-5">
                   {assistant.actions.map((action) => (
-                    <Box key={`${action.title}-${action.detail}`} className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
+                    <Box key={`${action.title}-${action.detail}`} className="admin-surface-soft rounded-3xl px-4 py-4">
                       <Stack direction="row" spacing={1} alignItems="center">
                         <Typography className="font-black text-slate-950">{action.title}</Typography>
                         <Chip size="small" label={priorityLabel(action.priority)} className="bg-slate-900! text-white!" />
@@ -204,7 +204,7 @@ export default function AdminAiPage() {
           </Box>
 
           <Box className="grid gap-4 xl:grid-cols-[1.1fr_0.9fr]">
-            <Card elevation={0} className="rounded-3xl! border border-slate-200 bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Stack direction="row" spacing={2} className="items-center">
                   <Box className="grid h-11 w-11 place-items-center rounded-2xl bg-emerald-100 text-emerald-700">
@@ -218,7 +218,7 @@ export default function AdminAiPage() {
                 <Divider className="my-5! border-slate-200!" />
                 <Stack spacing={2}>
                   {assistant.growthTenants.map((tenant) => (
-                    <Box key={tenant.id} className="grid gap-3 rounded-3xl border border-slate-200 p-4 md:grid-cols-[1fr_auto] md:items-center">
+                    <Box key={tenant.id} className="admin-surface grid gap-3 rounded-3xl p-4 md:grid-cols-[1fr_auto] md:items-center">
                       <Box>
                         <Typography className="font-black text-slate-950">{tenant.shopName}</Typography>
                         <Typography className="mt-1 text-sm text-slate-500">
@@ -235,7 +235,7 @@ export default function AdminAiPage() {
               </CardContent>
             </Card>
 
-            <Card elevation={0} className="rounded-3xl! border border-slate-200 bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Typography className="text-lg font-black text-slate-950">ร้านที่ควรตามต่อ</Typography>
                 <Typography className="mt-1 text-sm text-slate-500">AI รวมเหตุผลให้แล้วว่าร้านไหนควรถูกหยิบขึ้นมาดูก่อน</Typography>
@@ -246,7 +246,7 @@ export default function AdminAiPage() {
                     </Box>
                   ) : (
                     assistant.riskTenants.map((tenant) => (
-                      <Box key={`${tenant.tenantId}-${tenant.shopName}`} className="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4">
+                      <Box key={`${tenant.tenantId}-${tenant.shopName}`} className="admin-surface-soft rounded-3xl px-4 py-4">
                         <Typography className="font-black text-slate-950">{tenant.shopName}</Typography>
                         <Typography className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{tenant.publicDomain}</Typography>
                         <Typography className="mt-3 text-sm leading-6 text-slate-600">{tenant.reason}</Typography>

@@ -128,7 +128,7 @@ export default function StoreBuilderPage() {
         </Box>
       </Box>
 
-      <Card elevation={0} className="rounded-3xl! bg-white">
+      <Card elevation={0} className="admin-card rounded-3xl!">
         <CardContent className="grid gap-5">
           {loading ? (
             <Box className="grid min-h-72 place-items-center">
@@ -137,7 +137,7 @@ export default function StoreBuilderPage() {
           ) : (
             <>
               <Box className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
-                <Box className="grid gap-4 rounded-[28px] bg-slate-50 p-5">
+                <Box className="admin-surface-soft grid gap-4 rounded-[28px] p-5">
                   <Box>
                     <Typography className="text-xl font-black text-slate-950">
                       ธีมของหน้า marketplace
@@ -183,7 +183,7 @@ export default function StoreBuilderPage() {
                   </Stack>
                 </Box>
 
-                <Box className="grid gap-4 rounded-[28px] border border-slate-200 bg-white p-5">
+                <Box className="admin-surface grid gap-4 rounded-[28px] p-5">
                   <Box className="flex items-center justify-between gap-3">
                     <Box>
                       <Typography className="text-lg font-black text-slate-950">
@@ -217,7 +217,7 @@ export default function StoreBuilderPage() {
               </Box>
 
               {blocks.length === 0 ? (
-                <Box className="rounded-[28px] bg-slate-50 p-8 text-center">
+                <Box className="admin-surface-soft rounded-[28px] p-8 text-center">
                   <Typography className="font-bold text-slate-950">ยังไม่มีบล็อกหน้าเว็บรวม</Typography>
                   <Typography className="mt-1 text-sm text-slate-500">
                     เพิ่ม block เพื่อสร้าง marketplace banner, จุดขาย หรือ CTA กลางของระบบ
@@ -225,7 +225,7 @@ export default function StoreBuilderPage() {
                 </Box>
               ) : (
                 blocks.map((block, index) => (
-                  <Box key={block.id || index} className="grid gap-4 rounded-[28px] border border-slate-200 p-5">
+                  <Box key={block.id || index} className="admin-surface grid gap-4 rounded-[28px] p-5">
                     <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
                       <TextField
                         select

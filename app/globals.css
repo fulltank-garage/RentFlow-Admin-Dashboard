@@ -83,6 +83,24 @@ a {
   -webkit-backdrop-filter: none !important;
 }
 
+.admin-page .MuiCard-root {
+  background: var(--rf-admin-card) !important;
+  border: 1px solid var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow) !important;
+}
+
+.admin-surface {
+  background: var(--rf-admin-card) !important;
+  border: 1px solid var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow-soft) !important;
+}
+
+.admin-surface-soft {
+  background: var(--rf-admin-card-soft) !important;
+  border: 1px solid var(--rf-admin-line) !important;
+  box-shadow: var(--rf-admin-shadow-soft) !important;
+}
+
 .admin-card-soft,
 .partner-card-soft,
 .ios-chip {

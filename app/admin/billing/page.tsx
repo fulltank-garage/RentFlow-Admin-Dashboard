@@ -117,13 +117,13 @@ export default function BillingPage() {
       {error ? <Alert severity="error">{error}</Alert> : null}
 
       {loading ? (
-        <Box className="grid min-h-72 place-items-center rounded-[32px] bg-white">
+        <Box className="admin-surface grid min-h-72 place-items-center rounded-[32px]">
           <CircularProgress />
         </Box>
       ) : billing ? (
         <>
           <Box className="grid gap-4 md:grid-cols-3">
-            <Card elevation={0} className="rounded-3xl! bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Typography className="text-sm text-slate-500">
                   ร้านทั้งหมด
@@ -136,7 +136,7 @@ export default function BillingPage() {
                 </Typography>
               </CardContent>
             </Card>
-            <Card elevation={0} className="rounded-3xl! bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Typography className="text-sm text-slate-500">
                   รายได้เดือนนี้
@@ -149,7 +149,7 @@ export default function BillingPage() {
                 </Typography>
               </CardContent>
             </Card>
-            <Card elevation={0} className="rounded-3xl! bg-white">
+            <Card elevation={0} className="admin-card rounded-3xl!">
               <CardContent className="p-5!">
                 <Typography className="text-sm text-slate-500">
                   แผนที่ใช้งาน
@@ -169,7 +169,7 @@ export default function BillingPage() {
               <Card
                 key={plan.plan}
                 elevation={0}
-                className="rounded-3xl! bg-white"
+                className="admin-card rounded-3xl!"
               >
                 <CardContent className="p-5!">
                   <Typography className="text-sm font-bold text-slate-500">
@@ -189,7 +189,7 @@ export default function BillingPage() {
             ))}
           </Box>
 
-          <Card elevation={0} className="rounded-3xl! bg-white">
+          <Card elevation={0} className="admin-card rounded-3xl!">
             <CardContent className="p-5!">
               <Typography className="text-lg font-black text-slate-950">
                 รายได้ตามร้าน
@@ -203,7 +203,7 @@ export default function BillingPage() {
                   billing.items.map((tenant) => (
                     <Box
                       key={tenant.id}
-                      className="grid gap-3 rounded-2xl bg-slate-50 p-4 md:grid-cols-[1fr_auto] md:items-center"
+                      className="admin-surface-soft grid gap-3 rounded-2xl p-4 md:grid-cols-[1fr_auto] md:items-center"
                     >
                       <Box>
                         <Typography className="font-black text-slate-950">
@@ -228,7 +228,7 @@ export default function BillingPage() {
             </CardContent>
           </Card>
 
-          <Card elevation={0} className="rounded-3xl! bg-white">
+          <Card elevation={0} className="admin-card rounded-3xl!">
             <CardContent className="p-5!">
               <Typography className="text-lg font-black text-slate-950">
                 ใบแจ้งหนี้แพลตฟอร์ม
@@ -242,7 +242,7 @@ export default function BillingPage() {
                   (billing.invoices || []).slice(0, 8).map((invoice) => (
                     <Box
                       key={invoice.id}
-                      className="grid gap-3 rounded-2xl bg-slate-50 p-4 md:grid-cols-[1fr_auto] md:items-center"
+                      className="admin-surface-soft grid gap-3 rounded-2xl p-4 md:grid-cols-[1fr_auto] md:items-center"
                     >
                       <Box>
                         <Typography className="font-black text-slate-950">

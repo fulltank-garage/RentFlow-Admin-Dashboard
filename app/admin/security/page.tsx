@@ -169,7 +169,7 @@ export default function SecurityPage() {
       {error ? <Alert severity="error">{error}</Alert> : null}
 
       {loading ? (
-        <Box className="grid min-h-72 place-items-center rounded-[32px] bg-white">
+        <Box className="admin-surface grid min-h-72 place-items-center rounded-[32px]">
           <CircularProgress />
         </Box>
       ) : security ? (
@@ -183,7 +183,7 @@ export default function SecurityPage() {
               ["โดเมนยืนยันแล้ว", security.summary.verifiedCustomDomains],
               ["ร้านถูกระงับ", security.summary.suspendedTenants],
             ].map(([label, value]) => (
-              <Card key={String(label)} elevation={0} className="rounded-3xl! bg-white">
+              <Card key={String(label)} elevation={0} className="admin-card rounded-3xl!">
                 <CardContent className="p-5!">
                   <Typography className="text-sm text-slate-500">
                     {label}
@@ -196,7 +196,7 @@ export default function SecurityPage() {
             ))}
           </Box>
 
-          <Card elevation={0} className="rounded-3xl! bg-white">
+          <Card elevation={0} className="admin-card rounded-3xl!">
             <CardContent className="p-0!">
               {security.policies.map((policy, index) => (
                 <Box key={policy.title}>
@@ -222,7 +222,7 @@ export default function SecurityPage() {
             </CardContent>
           </Card>
 
-          <Card elevation={0} className="rounded-3xl! bg-white">
+          <Card elevation={0} className="admin-card rounded-3xl!">
             <CardContent className="p-5!">
               <Typography className="text-lg font-black text-slate-950">
                 ทีมผู้ดูแลระบบกลาง
@@ -305,7 +305,7 @@ export default function SecurityPage() {
             </CardContent>
           </Card>
 
-          <Card elevation={0} className="rounded-3xl! bg-white">
+          <Card elevation={0} className="admin-card rounded-3xl!">
             <CardContent className="p-0!">
               {(security.members || []).length === 0 ? (
                 <Box className="p-5">
@@ -343,7 +343,7 @@ export default function SecurityPage() {
             </CardContent>
           </Card>
 
-          <Card elevation={0} className="rounded-3xl! bg-white">
+          <Card elevation={0} className="admin-card rounded-3xl!">
             <CardContent className="p-5!">
               <Typography className="text-lg font-black text-slate-950">
                 ประวัติการเข้าสู่ระบบล่าสุด

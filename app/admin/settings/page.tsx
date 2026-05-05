@@ -114,9 +114,9 @@ export default function AdminSettingsPage() {
         </Typography>
       </Box>
 
-      <Card elevation={0} className="rounded-[34px]! border border-slate-200 bg-white!">
+      <Card elevation={0} className="admin-card rounded-[34px]!">
         <CardContent className="grid gap-6 p-6! lg:grid-cols-[1.2fr_0.8fr]">
-          <Box className="overflow-hidden rounded-[30px] bg-slate-100">
+          <Box className="admin-surface-soft overflow-hidden rounded-[30px]">
             {promoImageUrl ? (
               <Box
                 component="img"

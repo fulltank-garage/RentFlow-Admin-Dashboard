@@ -18,13 +18,8 @@ export const ADMIN_NAV: AdminNavItem[] = [
     group: "Operations",
   },
   {
-    label: "ร้านเช่ารถ",
+    label: "ร้านและโดเมน",
     href: "/admin/tenants",
-    group: "Operations",
-  },
-  {
-    label: "โดเมนร้าน",
-    href: "/admin/domains",
     group: "Operations",
   },
   {

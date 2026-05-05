@@ -9,7 +9,6 @@ import {
   CardContent,
   Chip,
   CircularProgress,
-  Divider,
   MenuItem,
   Snackbar,
   Stack,
@@ -271,8 +270,8 @@ export default function PartnersPage() {
             </Box>
           ) : (
             partners.map((partner, index) => (
-              <Box key={partner.id}>
-                <Box className="grid gap-4 p-5 lg:grid-cols-[1.2fr_0.8fr_auto] lg:items-center">
+              <Box key={partner.id} className={index === 0 ? "p-5" : "px-5 pb-5"}>
+                <Box className="admin-surface-soft grid gap-4 rounded-[26px] p-4 lg:grid-cols-[1.2fr_0.8fr_auto] lg:items-center">
                   <Box>
                     <Typography className="text-lg font-extrabold text-slate-950">
                       {partner.ownerName || partner.ownerEmail}
@@ -313,7 +312,6 @@ export default function PartnersPage() {
                     </Button>
                   </Stack>
                 </Box>
-                {index < partners.length - 1 ? <Divider /> : null}
               </Box>
             ))
           )}
