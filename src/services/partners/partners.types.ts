@@ -6,6 +6,7 @@ export type PlatformTenant = {
   ownerName?: string;
   ownerEmail: string;
   shopName: string;
+  logoUrl?: string;
   domainSlug: string;
   publicDomain: string;
   status: PlatformTenantStatus;

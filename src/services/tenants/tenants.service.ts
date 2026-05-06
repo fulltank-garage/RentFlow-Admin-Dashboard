@@ -1,14 +1,28 @@
-import { requestAdmin } from "../core/api-client.service";
+import { requestAdmin, resolveAdminAssetUrl } from "../core/api-client.service";
 import type {
+  PlatformTenant,
   PlatformTenantListResponse,
   PlatformTenantBookingMode,
   PlatformTenantStatus,
   UpdateTenantSettingsResponse,
 } from "./tenants.types";
 
+function normalizeTenant(tenant: PlatformTenant): PlatformTenant {
+  return {
+    ...tenant,
+    logoUrl: resolveAdminAssetUrl(tenant.logoUrl),
+  };
+}
+
 export const tenantsService = {
-  listTenants() {
-    return requestAdmin<PlatformTenantListResponse>("/platform/tenants");
+  async listTenants() {
+    const response = await requestAdmin<PlatformTenantListResponse>(
+      "/platform/tenants"
+    );
+    return {
+      ...response,
+      items: response.items.map(normalizeTenant),
+    };
   },
 
   updateTenantStatus(tenantId: string, status: PlatformTenantStatus) {
